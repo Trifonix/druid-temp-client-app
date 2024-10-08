@@ -1,4 +1,4 @@
-# vue-apollo-quasar-login
+# druid-temp-client-app
 
 ## Project setup
 ```
