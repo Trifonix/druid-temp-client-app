@@ -109,8 +109,8 @@ const onLogin = async () => {
 
 <style scoped>
 .page-background {
-    background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* Светло-голубой цвет фона страницы */
-    min-height: 100vh; /* Обеспечивает, чтобы фон покрывал всю высоту экрана */
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    min-height: 100vh;
 }
 
 .login-card {
@@ -122,10 +122,10 @@ const onLogin = async () => {
 }
 
 .login-title {
-    font-size: 2em;          /* Увеличенный размер шрифта заголовка */
-    font-weight: bold;       /* Жирный текст */
-    color: #3f51b5;          /* Цвет заголовка */
-    margin-bottom: 20px;     /* Отступ снизу */
+    font-size: 2em;
+    font-weight: bold;
+    color: #3f51b5;
+    margin-bottom: 20px;
 }
 
 .full-width {
@@ -133,19 +133,14 @@ const onLogin = async () => {
 }
 
 .input-field {
-    --q-color-primary: #3f51b5; /* Цвет фокуса */
-    --q-input-padding: 12px;    /* Отступы внутри поля */
-    background-color: #f9f9f9;  /* Цвет фона полей */
-    border-radius: 8px;         /* Скругление углов */
-    font-size: 1.2em;           /* Увеличенный размер шрифта полей */
-}
-
-.input-field:focus-within {
-    background-color: #ffffff;  /* Фон при фокусе */
+    --q-color-primary: #3f51b5;
+    --q-input-padding: 12px;
+    border-radius: 8px;
+    font-size: 1.2em;
 }
 
 .q-btn {
-    font-size: 1.2em;           /* Увеличенный размер шрифта кнопки */
-    padding: 12px;              /* Отступы внутри кнопки */
+    font-size: 1.2em;      
+    padding: 12px;
 }
 </style>
