@@ -3,7 +3,7 @@
         <q-card class="q-pa-md login-card">
             <q-card-section class="row items-center q-gutter-sm justify-center">
                 <div class="col text-center">
-                    <div class="login-title">Вход в систему Druid</div>
+                    <div class="login-title">Вход в систему</div>
                 </div>
             </q-card-section>
 
