@@ -3,7 +3,7 @@
     <q-header elevated class="glossy">
       <q-toolbar>
         <q-toolbar-title>
-          Пример пользовательского интерфейса приложения
+          Простое реактивное приложение по ведению проекта
         </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
