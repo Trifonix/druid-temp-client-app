@@ -18,6 +18,7 @@
             v-for="page in pages"
             :key="page.id"
             @click="selectPage(page)"
+            :class="{ 'nested-group': page.name !== 'Команда'}"
           >
             <q-item-section>
               <q-item-label>{{ page.name }}</q-item-label>
@@ -110,5 +111,9 @@ watchEffect(() => {
 }
 .full-width {
   width: 100%;
+}
+.nested-group {
+  margin-left: 1em;
+  box-shadow: -2px -2px 4px rgba(63, 81, 181, 0.4);
 }
 </style>
