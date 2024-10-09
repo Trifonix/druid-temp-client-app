@@ -83,7 +83,7 @@ const onLogin = async () => {
             const token = data.userSignIn.record.access_token;
             localStorage.setItem('access_token', token);
             Notify.create({
-                message: `Добро пожаловать! Ваш токен: ${token.slice(0, 42)}...`,
+                message: `Добро пожаловать!`, // прячем токен --- `Ваш токен: ${token.slice(0, 42)}...`
                 color: "positive",
                 icon: "check_circle",
                 position: "top",
