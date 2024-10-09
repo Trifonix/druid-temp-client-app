@@ -44,10 +44,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useApolloClient } from "@vue/apollo-composable";
 import gql from "graphql-tag";
+
+const apolloClient = useApolloClient().client;
 
 const router = useRouter();
 
@@ -62,6 +64,7 @@ const selectPage = (page) => {
 const logout = () => {
   localStorage.removeItem("access_token");
   localStorage.removeItem("space");
+  apolloClient.clearStore();
   router.push({ name: "login" });
 };
 
@@ -79,9 +82,11 @@ const GET_GROUPS = gql`
   }
 `;
 
-const { result, loading, error } = useQuery(GET_GROUPS);
+const { result, loading, error } = useQuery(GET_GROUPS, {
+  fetchPolicy: "cache-only",
+});
 
-onMounted(() => {
+watchEffect(() => {
   if (result.value && result.value.paginate_group) {
     pages.value = result.value.paginate_group.data;
   }
