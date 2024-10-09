@@ -18,13 +18,12 @@ const httpLink = createHttpLink({
 });
 
 const authLink = new ApolloLink((operation, forward) => {
-    // Добавляем токен в заголовки
     operation.setContext({
         headers: {
-            authorization: localStorage.getItem("token") || "", // Используйте свой способ получения токена
+            Authorization: `Bearer ${localStorage.getItem("access_token") || ""}`,
+            space: `${localStorage.getItem("space") || ""}`,
         },
     });
-
     return forward(operation);
 });
 

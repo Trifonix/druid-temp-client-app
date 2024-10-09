@@ -20,7 +20,7 @@
             @click="selectPage(page)"
           >
             <q-item-section>
-              <q-item-label>{{ page.title }}</q-item-label>
+              <q-item-label>{{ page.name }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -30,11 +30,11 @@
         <q-card>
           <q-card-section>
             <div v-if="selectedPage">
-              <h3>{{ selectedPage.title }}</h3>
-              <p>{{ selectedPage.content }}</p>
+              <h3>{{ selectedPage.name }}</h3>
+              <p>Здесь можно добавить контент для страницы.</p>
             </div>
             <div v-else>
-              <h3>Выберите страницу из дерева</h3>
+              <h4>Выберите страницу из дерева страниц слева, чтобы увидеть контент выбранной страницы</h4>
             </div>
           </q-card-section>
         </q-card>
@@ -44,16 +44,14 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useQuery } from "@vue/apollo-composable";
+import gql from "graphql-tag";
 
 const router = useRouter();
 
-const pages = ref([
-  { id: 1, title: "Главная", content: "Это главная страница." },
-  { id: 2, title: "О нас", content: "Информация о компании." },
-  { id: 3, title: "Контакты", content: "Свяжитесь с нами." },
-]);
+const pages = ref([]);
 
 const selectedPage = ref(null);
 
@@ -63,8 +61,31 @@ const selectPage = (page) => {
 
 const logout = () => {
   localStorage.removeItem("access_token");
+  localStorage.removeItem("space");
   router.push({ name: "login" });
 };
+
+const GET_GROUPS = gql`
+  {
+    paginate_group(
+      page: 1
+      perPage: 100
+    ) {
+      data {
+          id
+          name
+      }
+    }
+  }
+`;
+
+const { result, loading, error } = useQuery(GET_GROUPS);
+
+onMounted(() => {
+  if (result.value && result.value.paginate_group) {
+    pages.value = result.value.paginate_group.data;
+  }
+});
 </script>
 
 <style scoped>

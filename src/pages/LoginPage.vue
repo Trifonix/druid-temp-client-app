@@ -81,7 +81,9 @@ const onLogin = async () => {
         const { data } = await userSignIn();
         if (data && data.userSignIn) {
             const token = data.userSignIn.record.access_token;
+            const space = 1795;
             localStorage.setItem('access_token', token);
+            localStorage.setItem('space', space);
             Notify.create({
                 message: `Добро пожаловать!`, // прячем токен --- `Ваш токен: ${token.slice(0, 42)}...`
                 color: "positive",
