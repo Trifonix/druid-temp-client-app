@@ -6,7 +6,7 @@
           Простое реактивное приложение по ведению проекта
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>Druid</div>
       </q-toolbar>
     </q-header>
 
