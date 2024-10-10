@@ -119,8 +119,9 @@ watchEffect(() => {
 // 3.2.	При выборе в дереве группы выводить таблицу ее участников
 const members = ref([]);
 const columns = [
-  { name: 'first_name', label: 'Имя', field: row => row.fullname.first_name, align: 'left' },
-  { name: 'last_name', label: 'Фамилия', field: row => row.fullname.last_name, align: 'left' }
+  { name: 'first_name', label: 'First name', field: row => row.fullname.first_name, align: 'left' },
+  { name: 'last_name', label: 'Last name', field: row => row.fullname.last_name, align: 'left' },
+  { name: 'email', label: 'Email', field: row => row.email.email, align: 'left' }
 ];
 const SELECT_GROUP_AND_SHOW_USERS_TABLE = async (page) => {
   selectedPage.value = page;
@@ -134,6 +135,9 @@ const SELECT_GROUP_AND_SHOW_USERS_TABLE = async (page) => {
               fullname {
                 first_name
                 last_name
+              }
+              email {
+                email
               }
             }
           }
