@@ -69,6 +69,7 @@ const logout = () => {
   router.push({ name: "login" });
 };
 
+// Выводим все группы пространства
 const GET_GROUPS = gql`
   {
     paginate_group(
@@ -82,16 +83,16 @@ const GET_GROUPS = gql`
     }
   }
 `;
-
 const { result, loading, error } = useQuery(GET_GROUPS, {
   fetchPolicy: "cache-only",
 });
-
 watchEffect(() => {
   if (result.value && result.value.paginate_group) {
     pages.value = result.value.paginate_group.data;
   }
 });
+// Закончили вывод всех групп пространства
+
 </script>
 
 <style scoped>
