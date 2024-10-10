@@ -1,7 +1,9 @@
 <template>
   <q-page class="main-page">
+    
     <div class="row full-height">
       <div class="col-3 page-tree q-pa-md">
+        
         <div class="logout-container q-mb-md">
           <q-btn
             label="Выйти"
@@ -17,7 +19,7 @@
             clickable
             v-for="page in pages"
             :key="page.id"
-            @click="selectPage(page)"
+            @click="SELECT_GROUP_AND_SHOW_USERS_TABLE(page)"
             :class="{ 'nested-group': page.name !== 'Команда'}"
           >
             <q-item-section>
@@ -25,21 +27,34 @@
             </q-item-section>
           </q-item>
         </q-list>
+      
       </div>
 
       <div class="col q-pa-md">
+        
         <q-card>
           <q-card-section>
             <div v-if="selectedPage">
               <h3>{{ selectedPage.name }}</h3>
-              <p>Здесь можно добавить контент для страницы.</p>
+              <h5>{{ selectedPage.id }}</h5>
+              <q-table
+                v-if="members.length > 0"
+                :rows="members"
+                :columns="columns"
+                row-key="id"
+              />
+              <div v-else>
+                <h6>Кажется, в этой группе нет участников</h6>
+              </div>
             </div>
             <div v-else>
-              <h4>Выберите страницу из дерева страниц слева, чтобы увидеть контент выбранной страницы</h4>
+              <h5>Выберите страницу из дерева страниц слева, чтобы увидеть контент выбранной страницы</h5>
             </div>
           </q-card-section>
         </q-card>
+
       </div>
+
     </div>
   </q-page>
 </template>
@@ -51,16 +66,7 @@ import { useQuery, useApolloClient } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 
 const apolloClient = useApolloClient().client;
-
 const router = useRouter();
-
-const pages = ref([]);
-
-const selectedPage = ref(null);
-
-const selectPage = (page) => {
-  selectedPage.value = page;
-};
 
 const logout = () => {
   localStorage.removeItem("access_token");
@@ -92,6 +98,39 @@ watchEffect(() => {
   }
 });
 // Закончили вывод всех групп пространства
+
+// 3.2.	При выборе в дереве группы выводить таблицу ее участников
+const pages = ref([]);
+const selectedPage = ref(null);
+const members = ref([]);
+const columns = [
+  { name: 'first_name', label: 'Имя', field: row => row.fullname.first_name, align: 'left' },
+  { name: 'last_name', label: 'Фамилия', field: row => row.fullname.last_name, align: 'left' }
+];
+const SELECT_GROUP_AND_SHOW_USERS_TABLE = async (page) => {
+  selectedPage.value = page;
+  const { data } = await apolloClient.query( {
+    query: gql`
+      query ($id: String!) {
+        get_group(id: $id) {
+          subject {
+            object {
+              id
+              fullname {
+                first_name
+                last_name
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: page.id },
+    fetchPolicy: "network-only"
+  });
+  members.value = data.get_group.subject.map(item => item.object);
+};
+// КОНЕЦ --- 3.2.	При выборе в дереве группы выводить таблицу ее участников
 
 </script>
 
