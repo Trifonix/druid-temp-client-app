@@ -70,7 +70,7 @@ const logout = () => {
 };
 
 // Выводим все группы пространства
-const GET_GROUPS = gql`
+const GET_ALL_SPACE_GROUP_IDS_AND_NAMES = gql`
   {
     paginate_group(
       page: 1
@@ -83,7 +83,7 @@ const GET_GROUPS = gql`
     }
   }
 `;
-const { result, loading, error } = useQuery(GET_GROUPS, {
+const { result, loading, error } = useQuery(GET_ALL_SPACE_GROUP_IDS_AND_NAMES, {
   fetchPolicy: "cache-only",
 });
 watchEffect(() => {
