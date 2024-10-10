@@ -32,6 +32,7 @@
             clickable
             v-for="page in allSpacePagesWithoutGroups"
             :key="page.id"
+            @click="page.title === 'Модули' ? fetchModules() : null"
           >
             <q-item-section>
               <q-item-label>{{ page.title }}</q-item-label>
@@ -73,9 +74,25 @@
               </div>
             </div>
 
+            <div v-else-if="isModulesPageSelected">
+              <q-table
+                :rows="modules"
+                row-key="id"
+              >
+                <template v-slot:body="props">
+                  <q-tr :props="props">
+                    <q-td>{{ props.row.name }}</q-td>
+                    <q-td>{{ props.row.id }}</q-td>
+                  </q-tr>
+                </template>
+              </q-table>
+            </div>
+
             <div v-else>
               <h5>Выберите страницу из дерева страниц слева, чтобы увидеть контент выбранной страницы</h5>
             </div>
+
+            
 
           </q-card-section>
         </q-card>
@@ -131,6 +148,8 @@ const columns = [
   { name: 'email', label: 'Email', field: row => row.email.email, align: 'left' }
 ];
 const SELECT_GROUP_AND_SHOW_USERS_TABLE = async (group) => {
+  alert(isModulesPageSelected.value);
+  isModulesPageSelected.value = false;
   selectedGroup.value = group;
   const { data } = await apolloClient.query( {
     query: gql`
@@ -224,7 +243,34 @@ watchEffect(() => {
 // КОНЕЦ --- 4.1. В дереве вывести страницу Модули на уровне страницы Команда
 
 // 4.2. При выборе страницы Модули в контенте выводить таблицу с полями объекта Модуль и количество его задач в каждом статусе
-
+const modules = ref([]);
+const isModulesPageSelected = ref(false);
+const GET_MODULES = gql`
+  query {
+    paginate_type1(
+      page: 1
+      perPage: 255
+    ) {
+      data {
+        id
+        name
+      }
+      paginatorInfo {
+        count
+      }
+    }
+  }
+`;
+const fetchModules = async () => {
+  alert(isModulesPageSelected.value);
+  isModulesPageSelected.value = true;
+  const { data } = await apolloClient.query({
+    query: GET_MODULES,
+    fetchPolicy: "network-only"
+  });
+  modules.value = data.paginate_type1.data;
+  alert(isModulesPageSelected.value);
+};
 //  КОНЕЦ --- 4.2. При выборе страницы Модули в контенте выводить таблицу с полями объекта Модуль и количество его задач в каждом статусе
 </script>
 
