@@ -32,7 +32,7 @@
             clickable
             v-for="page in allSpacePagesWithoutGroups"
             :key="page.id"
-            @click="page.title === 'Модули' ? GET_MODULES() : null"
+            @click="page.title === 'Модули' ? fetchModules() : null"
           >
             <q-item-section>
               <q-item-label>{{ page.title }}</q-item-label>
@@ -260,7 +260,7 @@ const GET_MODULES = gql`
     }
   }
 `;
-const GET_MODULES = async () => {
+const fetchModules = async () => {
   isStartPageNow.value = false;
   selectedGroup.value = false;
   isModulesPageSelected.value = true;
