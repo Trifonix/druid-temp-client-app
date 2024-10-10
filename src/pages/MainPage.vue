@@ -15,17 +15,29 @@
         </div>
 
         <q-list bordered>
+
           <q-item
             clickable
-            v-for="page in pages"
-            :key="page.id"
-            @click="SELECT_GROUP_AND_SHOW_USERS_TABLE(page)"
-            :class="{ 'nested-group': page.name !== 'Команда'}"
+            v-for="group in allSpaceGroups"
+            :key="group.id"
+            @click="SELECT_GROUP_AND_SHOW_USERS_TABLE(group)"
+            :class="{ 'nested-group': group.name !== 'Команда'}"
           >
             <q-item-section>
-              <q-item-label>{{ page.name }}</q-item-label>
+              <q-item-label>{{ group.name }}</q-item-label>
             </q-item-section>
           </q-item>
+
+          <q-item
+            clickable
+            v-for="page in allSpacePagesWithoutGroups"
+            :key="page.id"
+          >
+            <q-item-section>
+              <q-item-label>{{ page.title }}</q-item-label>
+            </q-item-section>
+          </q-item>
+
         </q-list>
       
       </div>
@@ -35,7 +47,7 @@
         <q-card>
           <q-card-section>
 
-            <div class="invite-form row items-center full-width" v-if="selectedPage">
+            <div class="invite-form row items-center full-width" v-if="selectedGroup">
               <q-input v-model="inviteData.name" label="Имя" class="col q-mr-sm" outlined />
               <q-input v-model="inviteData.surname" label="Фамилия" class="col q-mr-sm" outlined />
               <q-input v-model="inviteData.email" label="Email" class="col q-mr-sm" outlined type="email" />
@@ -47,9 +59,9 @@
               />
             </div>
 
-            <div v-if="selectedPage">
-              <h3>{{ selectedPage.name }}</h3>
-              <h5>{{ selectedPage.id }}</h5>
+            <div v-if="selectedGroup">
+              <h3>{{ selectedGroup.name }}</h3>
+              <h5>{{ selectedGroup.id }}</h5>
               <q-table
                 v-if="members.length > 0"
                 :rows="members"
@@ -90,9 +102,9 @@ const logout = () => {
   router.push({ name: "login" });
 };
 
-// Выводим все группы пространства
-const pages = ref([]);
-const selectedPage = ref(null);
+// Сбор всех групп пространства
+const allSpaceGroups = ref([]);
+const selectedGroup = ref(null);
 const GET_ALL_SPACE_GROUP_IDS_AND_NAMES = gql`
   {
     paginate_group(
@@ -109,12 +121,7 @@ const GET_ALL_SPACE_GROUP_IDS_AND_NAMES = gql`
 const { result, loading, error } = useQuery(GET_ALL_SPACE_GROUP_IDS_AND_NAMES, {
   fetchPolicy: "cache-and-network",
 });
-watchEffect(() => {
-  if (result.value && result.value.paginate_group) {
-    pages.value = result.value.paginate_group.data;
-  }
-});
-// Закончили вывод всех групп пространства
+// КОНЕЦ --- Сбор всех групп пространства
 
 // 3.2.	При выборе в дереве группы выводить таблицу ее участников
 const members = ref([]);
@@ -123,8 +130,8 @@ const columns = [
   { name: 'last_name', label: 'Last name', field: row => row.fullname.last_name, align: 'left' },
   { name: 'email', label: 'Email', field: row => row.email.email, align: 'left' }
 ];
-const SELECT_GROUP_AND_SHOW_USERS_TABLE = async (page) => {
-  selectedPage.value = page;
+const SELECT_GROUP_AND_SHOW_USERS_TABLE = async (group) => {
+  selectedGroup.value = group;
   const { data } = await apolloClient.query( {
     query: gql`
       query ($id: String!) {
@@ -144,7 +151,7 @@ const SELECT_GROUP_AND_SHOW_USERS_TABLE = async (page) => {
         }
       }
     `,
-    variables: { id: page.id },
+    variables: { id: group.id },
     fetchPolicy: "network-only"
   });
   members.value = data.get_group.subject.map(item => item.object);
@@ -166,7 +173,7 @@ const inviteUser = () => {
     name: inviteData.value.name,
     surname: inviteData.value.surname,
     email: inviteData.value.email,
-    group_id: selectedPage.value.id
+    group_id: selectedGroup.value.id
   };
 
   inviteUserMutation({ input }).then(({ data }) => {
@@ -180,7 +187,40 @@ const inviteUser = () => {
 // КОНЕЦ --- 3.3.	На страницу участников добавить функционал приглашения участников в приложение в нужную группу.
 
 // 4.1. В дереве вывести страницу Модули на уровне страницы Команда
-
+const allSpacePagesWithoutGroups = ref([]);
+const GET_ALL_SPACE_PAGES = gql`
+  query {
+    pages(perPage: 255) { 
+      data {
+        title
+        id
+        parent_id
+      }
+    }
+  }
+`;
+const fetchallSpacePagesWithoutGroups = async () => {
+  try {
+    const { data } = await apolloClient.query({
+      query: GET_ALL_SPACE_PAGES,
+      fetchPolicy: "network-only"
+    });
+    if (data && data.pages) {
+      const groupsData = allSpaceGroups.value.map(group => group.name);
+      allSpacePagesWithoutGroups.value = data.pages.data.filter(page => !groupsData.includes(page.title));
+    }
+  } catch (error) {
+    console.error("Ошибка при получении страниц:", error);
+  }
+};
+watchEffect(() => {
+  if (result.value && result.value.paginate_group) {
+    allSpaceGroups.value = result.value.paginate_group.data;
+    if (allSpaceGroups.value.length > 0) {
+      fetchallSpacePagesWithoutGroups();
+    }
+  }
+});
 // КОНЕЦ --- 4.1. В дереве вывести страницу Модули на уровне страницы Команда
 </script>
 
@@ -204,7 +244,8 @@ const inviteUser = () => {
 }
 .nested-group {
   margin-left: 1em;
-  box-shadow: -2px -2px 4px rgba(63, 81, 181, 0.4);
+  box-shadow: -4px 0 8px rgba(63, 81, 181, 0.2), 
+              -8px 0 6px rgba(63, 81, 181, 0.1);
 }
 .invite-form {
   display: flex;
