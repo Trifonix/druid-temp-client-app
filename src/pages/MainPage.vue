@@ -32,7 +32,7 @@
             clickable
             v-for="page in allSpacePagesWithoutGroups"
             :key="page.id"
-            @click="page.title === 'Модули' ? fetchModules() : null"
+            @click="page.title === 'Модули' ? GET_MODULES() : null"
           >
             <q-item-section>
               <q-item-label>{{ page.title }}</q-item-label>
@@ -47,6 +47,10 @@
         
         <q-card>
           <q-card-section>
+
+            <div v-if="isStartPageNow">
+              <h5>Выберите страницу из дерева страниц слева, чтобы увидеть контент выбранной страницы</h5>
+            </div>
 
             <div class="invite-form row items-center full-width" v-if="selectedGroup">
               <q-input v-model="inviteData.name" label="Имя" class="col q-mr-sm" outlined />
@@ -74,7 +78,7 @@
               </div>
             </div>
 
-            <div v-else-if="isModulesPageSelected">
+            <div v-if="isModulesPageSelected">
               <q-table
                 :rows="modules"
                 row-key="id"
@@ -87,12 +91,6 @@
                 </template>
               </q-table>
             </div>
-
-            <div v-else>
-              <h5>Выберите страницу из дерева страниц слева, чтобы увидеть контент выбранной страницы</h5>
-            </div>
-
-            
 
           </q-card-section>
         </q-card>
@@ -111,6 +109,7 @@ import gql from "graphql-tag";
 
 const apolloClient = useApolloClient().client;
 const router = useRouter();
+const isStartPageNow = ref(true);
 
 const logout = () => {
   localStorage.removeItem("access_token");
@@ -148,7 +147,7 @@ const columns = [
   { name: 'email', label: 'Email', field: row => row.email.email, align: 'left' }
 ];
 const SELECT_GROUP_AND_SHOW_USERS_TABLE = async (group) => {
-  alert(isModulesPageSelected.value);
+  isStartPageNow.value = false;
   isModulesPageSelected.value = false;
   selectedGroup.value = group;
   const { data } = await apolloClient.query( {
@@ -261,15 +260,15 @@ const GET_MODULES = gql`
     }
   }
 `;
-const fetchModules = async () => {
-  alert(isModulesPageSelected.value);
+const GET_MODULES = async () => {
+  isStartPageNow.value = false;
+  selectedGroup.value = false;
   isModulesPageSelected.value = true;
   const { data } = await apolloClient.query({
     query: GET_MODULES,
     fetchPolicy: "network-only"
   });
   modules.value = data.paginate_type1.data;
-  alert(isModulesPageSelected.value);
 };
 //  КОНЕЦ --- 4.2. При выборе страницы Модули в контенте выводить таблицу с полями объекта Модуль и количество его задач в каждом статусе
 </script>
