@@ -6,9 +6,9 @@
         
         <div class="logout-container q-mb-md">
           <q-btn
-            label="Выйти"
-            color="red"
-            size="lg"
+            label="Выйти из системы"
+            color="pink-14"
+            size="md"
             @click="logout"
             class="full-width"
           />
@@ -34,6 +34,19 @@
         
         <q-card>
           <q-card-section>
+
+            <div class="invite-form row items-center full-width" v-if="selectedPage">
+              <q-input v-model="inviteData.name" label="Имя" class="col q-mr-sm" outlined />
+              <q-input v-model="inviteData.surname" label="Фамилия" class="col q-mr-sm" outlined />
+              <q-input v-model="inviteData.email" label="Email" class="col q-mr-sm" outlined type="email" />
+              <q-btn
+                label="Пригласить в эту группу"
+                color="primary"
+                @click="inviteUser"
+                class="q-mb-mt"
+              />
+            </div>
+
             <div v-if="selectedPage">
               <h3>{{ selectedPage.name }}</h3>
               <h5>{{ selectedPage.id }}</h5>
@@ -47,9 +60,11 @@
                 <h6>Кажется, в этой группе нет участников</h6>
               </div>
             </div>
+
             <div v-else>
               <h5>Выберите страницу из дерева страниц слева, чтобы увидеть контент выбранной страницы</h5>
             </div>
+
           </q-card-section>
         </q-card>
 
@@ -62,7 +77,7 @@
 <script setup>
 import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
-import { useQuery, useApolloClient } from "@vue/apollo-composable";
+import { useQuery, useApolloClient, useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 
 const apolloClient = useApolloClient().client;
@@ -76,6 +91,8 @@ const logout = () => {
 };
 
 // Выводим все группы пространства
+const pages = ref([]);
+const selectedPage = ref(null);
 const GET_ALL_SPACE_GROUP_IDS_AND_NAMES = gql`
   {
     paginate_group(
@@ -90,7 +107,7 @@ const GET_ALL_SPACE_GROUP_IDS_AND_NAMES = gql`
   }
 `;
 const { result, loading, error } = useQuery(GET_ALL_SPACE_GROUP_IDS_AND_NAMES, {
-  fetchPolicy: "cache-only",
+  fetchPolicy: "cache-and-network",
 });
 watchEffect(() => {
   if (result.value && result.value.paginate_group) {
@@ -100,8 +117,6 @@ watchEffect(() => {
 // Закончили вывод всех групп пространства
 
 // 3.2.	При выборе в дереве группы выводить таблицу ее участников
-const pages = ref([]);
-const selectedPage = ref(null);
 const members = ref([]);
 const columns = [
   { name: 'first_name', label: 'Имя', field: row => row.fullname.first_name, align: 'left' },
@@ -133,7 +148,31 @@ const SELECT_GROUP_AND_SHOW_USERS_TABLE = async (page) => {
 // КОНЕЦ --- 3.2.	При выборе в дереве группы выводить таблицу ее участников
 
 // 3.3.	На страницу участников добавить функционал приглашения участников в приложение в нужную группу.
+const inviteData = ref({ name: '', surname: '', email: '' });
+const INVITE_NEW_USER_IN_CURRENT_GROUP = gql`
+  mutation InviteUser($input: SpaceInviteUserInput!) {
+    spaceInviteUser(input: $input) {
+      status
+    }
+  }
+`;
+const { mutate: inviteUserMutation } = useMutation(INVITE_NEW_USER_IN_CURRENT_GROUP);
+const inviteUser = () => {
+  const input = {
+    name: inviteData.value.name,
+    surname: inviteData.value.surname,
+    email: inviteData.value.email,
+    group_id: selectedPage.value.id
+  };
 
+  inviteUserMutation({ input }).then(({ data }) => {
+    if (data.spaceInviteUser.status === 200) {
+      alert('Пользователь успешно приглашен!');
+    } else {
+      alert('Не удалось пригласить пользователя.');
+    }
+  });
+};
 // КОНЕЦ --- 3.3.	На страницу участников добавить функционал приглашения участников в приложение в нужную группу.
 </script>
 
@@ -158,5 +197,9 @@ const SELECT_GROUP_AND_SHOW_USERS_TABLE = async (page) => {
 .nested-group {
   margin-left: 1em;
   box-shadow: -2px -2px 4px rgba(63, 81, 181, 0.4);
+}
+.invite-form {
+  display: flex;
+  width: 100vw;
 }
 </style>
