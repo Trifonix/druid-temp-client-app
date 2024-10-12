@@ -82,12 +82,14 @@
             <div v-if="isModulesPageSelected">
               <q-table
                 :rows="modules"
+                :columns="columnsForModuleTable"
                 row-key="id"
               >
                 <template v-slot:body="props">
                   <q-tr :props="props">
                     <q-td>{{ props.row.name }}</q-td>
                     <q-td>{{ props.row.id }}</q-td>
+                    <q-td>{{ props.row.property1 }}</q-td>
                   </q-tr>
                 </template>
               </q-table>
@@ -246,6 +248,12 @@ watchEffect(() => {
 // 4.2. При выборе страницы Модули в контенте выводить таблицу с полями объекта Модуль и количество его задач в каждом статусе
 const modules = ref([]);
 const isModulesPageSelected = ref(false);
+const columnsForModuleTable = [
+  { name: 'name', label: 'Название модуля', field: 'name', align: 'left' },
+  { name: 'idx', label: 'Идентификационный номер', field: 'idx', align: 'left' },
+  { name: 'property1', label: 'Название', field: 'property1', align: 'left' }
+];
+
 const GET_MODULES = gql`
   query {
     paginate_type1(
@@ -255,6 +263,7 @@ const GET_MODULES = gql`
       data {
         id
         name
+        property1
       }
       paginatorInfo {
         count
