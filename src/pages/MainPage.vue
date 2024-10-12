@@ -78,6 +78,7 @@
               </div>
             </div>
 
+            <!-- START 4.2 -->
             <div v-if="isModulesPageSelected">
               <q-table
                 :rows="modules"
@@ -91,6 +92,7 @@
                 </template>
               </q-table>
             </div>
+            <!-- END 4.2 -->
 
           </q-card-section>
         </q-card>
