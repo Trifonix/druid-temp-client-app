@@ -87,9 +87,10 @@
               >
                 <template v-slot:body="props">
                   <q-tr :props="props">
-                    <q-td>{{ props.row.name }}</q-td>
-                    <q-td>{{ props.row.id }}</q-td>
-                    <q-td>{{ props.row.property1 }}</q-td>
+                    <q-td>{{ props.row.module_name }}</q-td>
+                    <q-td>{{ props.row.property2 }}</q-td>
+                    <q-td>{{ props.row.start_date }}</q-td>
+                    <q-td>{{ props.row.end_date }}</q-td>
                   </q-tr>
                 </template>
               </q-table>
@@ -249,11 +250,12 @@ watchEffect(() => {
 const modules = ref([]);
 const isModulesPageSelected = ref(false);
 const columnsForModuleTable = [
-  { name: 'name', label: 'Название модуля', field: 'name', align: 'left' },
-  { name: 'idx', label: 'Идентификационный номер', field: 'idx', align: 'left' },
-  { name: 'property1', label: 'Название', field: 'property1', align: 'left' }
+  { name: 'module_name', label: 'Module name', field: 'module_name', align: 'left' },
+  { name: 'property2', label: 'Answerable', field: 'property2', align: 'left' },
+  { name: 'start_date', label: 'Start date', field: 'start_date', align: 'left' },
+  { name: 'end_date', label: 'End date', field: 'end_date', align: 'left' }
 ];
-
+//property2
 const GET_MODULES = gql`
   query {
     paginate_type1(
@@ -261,9 +263,9 @@ const GET_MODULES = gql`
       perPage: 255
     ) {
       data {
-        id
-        name
-        property1
+        module_name
+        start_date
+        end_date
       }
       paginatorInfo {
         count
