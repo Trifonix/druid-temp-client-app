@@ -88,7 +88,13 @@
                 <template v-slot:body="props">
                   <q-tr :props="props">
                     <q-td>{{ props.row.module_name }}</q-td>
-                    <q-td>{{ props.row.property2 }}</q-td>
+                    <q-td>
+                      {{ 
+                        (props.row.answerable?.object?.fullname?.first_name || '') 
+                        + ' ' +
+                        (props.row.answerable?.object?.fullname?.last_name || '') 
+                      }}
+                    </q-td>
                     <q-td>{{ props.row.start_date }}</q-td>
                     <q-td>{{ props.row.end_date }}</q-td>
                   </q-tr>
@@ -251,11 +257,11 @@ const modules = ref([]);
 const isModulesPageSelected = ref(false);
 const columnsForModuleTable = [
   { name: 'module_name', label: 'Module name', field: 'module_name', align: 'left' },
-  { name: 'property2', label: 'Answerable', field: 'property2', align: 'left' },
+  { name: 'answerable', label: 'Answerable', field: 'answerable', align: 'left' },
   { name: 'start_date', label: 'Start date', field: 'start_date', align: 'left' },
   { name: 'end_date', label: 'End date', field: 'end_date', align: 'left' }
 ];
-//property2
+
 const GET_MODULES = gql`
   query {
     paginate_type1(
@@ -264,6 +270,14 @@ const GET_MODULES = gql`
     ) {
       data {
         module_name
+        answerable {
+          object {
+            fullname {
+              first_name
+              last_name
+            }
+          }
+        }
         start_date
         end_date
       }
