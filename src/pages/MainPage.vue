@@ -97,7 +97,7 @@
                     </q-td>
                     <q-td>{{ props.row.start_date }}</q-td>
                     <q-td>{{ props.row.end_date }}</q-td>
-                    <q-td>{{ (props.row.tasks?.object?.name) ? 1 : 0 }}</q-td>
+                    <q-td>{{ props.row.tasks.length }}</q-td>
                   </q-tr>
                 </template>
               </q-table>
