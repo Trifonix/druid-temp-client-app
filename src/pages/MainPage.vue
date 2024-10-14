@@ -97,6 +97,7 @@
                     </q-td>
                     <q-td>{{ props.row.start_date }}</q-td>
                     <q-td>{{ props.row.end_date }}</q-td>
+                    <q-td>{{ (props.row.tasks?.object?.name) ? 1 : 0 }}</q-td>
                   </q-tr>
                 </template>
               </q-table>
@@ -259,7 +260,8 @@ const columnsForModuleTable = [
   { name: 'module_name', label: 'Module name', field: 'module_name', align: 'left' },
   { name: 'answerable', label: 'Answerable', field: 'answerable', align: 'left' },
   { name: 'start_date', label: 'Start date', field: 'start_date', align: 'left' },
-  { name: 'end_date', label: 'End date', field: 'end_date', align: 'left' }
+  { name: 'end_date', label: 'End date', field: 'end_date', align: 'left' },
+  { name: 'tasks', label: 'Tasks', field: 'tasks', align: 'left' }
 ];
 
 const GET_MODULES = gql`
@@ -280,6 +282,11 @@ const GET_MODULES = gql`
         }
         start_date
         end_date
+        tasks {
+          object {
+            name
+          }
+        }
       }
       paginatorInfo {
         count
