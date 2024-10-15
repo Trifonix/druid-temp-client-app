@@ -80,6 +80,7 @@
 
             <!-- START 4.2 -->
             <div v-if="isModulesPageSelected">
+              <q-btn label="Добавить модуль" color="primary" @click="addNewModule" />
               <q-table
                 :rows="modules"
                 :columns="columnsForModuleTable"
@@ -99,7 +100,7 @@
                     <q-td>{{ props.row.end_date }}</q-td>
                     <q-td>{{ props.row.tasks.length }}</q-td>
                     <q-td>
-                      <q-btn color="red" label="Удалить" @click="deleteModule(props.row.id)"></q-btn>
+                      <q-btn color="red" label="Удалить модуль" @click="deleteModule(props.row.id)"></q-btn>
                     </q-td>
                   </q-tr>
                 </template>
@@ -117,11 +118,11 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, toRaw } from "vue";
 import { useRouter } from "vue-router";
 import { useQuery, useApolloClient, useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { useQuasar } from 'quasar';
+import { useQuasar, date } from "quasar";
 
 const apolloClient = useApolloClient().client;
 const router = useRouter();
@@ -360,7 +361,75 @@ function deleteModule(moduleId) {
   });
 }
 // Создание модуля
-
+const CREATE_MODULE = gql`
+  mutation createModule($input: create_module_input!) {
+    create_module(input: $input) {
+      status
+      recordId
+      record {
+        id
+        module_name
+        start_date
+        end_date        
+      }
+    }
+  }
+`;
+const { mutate: createModuleMutation } = useMutation(CREATE_MODULE);
+function addNewModule() {
+  const lastModuleNumber = Math.max(
+    ...modules.value.map((module) => {
+      const match = module.module_name.match(/Тест (\d+)/);
+      return match ? parseInt(match[1]) : 0;
+    }),
+    0
+  ); 
+  const newModuleNumber = lastModuleNumber + 1;
+  const today = date.formatDate(new Date(), 'DD.MM.YYYY');
+  const tomorrow = date.formatDate(
+    new Date(Date.now() + 86400000),
+    'DD.MM.YYYY'
+  );
+  const input = {
+    name: `Тестовый модуль ${newModuleNumber}`,
+    module_name: `Тест ${newModuleNumber}`,
+    start_date: today,
+    end_date: tomorrow,
+  };
+  createModuleMutation({ input })
+  .then(({ data }) => {
+    if (data.create_module.status === 200) {
+      const newModule = {
+        id: data.create_module.record.id,
+        module_name: data.create_module.record.module_name,
+        start_date: data.create_module.record.start_date,
+        end_date: data.create_module.record.end_date,
+        answerable: null,
+        tasks: []
+      };
+      modules.value = [...modules.value, newModule];
+      $q.notify({
+        type: 'positive',
+        message: 'Модуль успешно создан!'
+      });
+    } else {
+      $q.notify({
+        type: 'negative',
+        message: 'Не удалось создать модуль.'
+      });
+    }
+  })
+  .catch((error) => {
+    console.error('Ошибка при создании модуля:', error);
+    if (error.response) {
+      console.error('Ответ сервера:', error.response.data);
+    }
+    $q.notify({
+      type: 'negative',
+      message: 'Ошибка при создании модуля!'
+    });
+  });
+}
 //  КОНЕЦ --- 4.2. При выборе страницы Модули в контенте выводить таблицу с полями объекта Модуль и количество его задач в каждом статусе
 </script>
 
