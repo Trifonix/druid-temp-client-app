@@ -98,6 +98,9 @@
                     <q-td>{{ props.row.start_date }}</q-td>
                     <q-td>{{ props.row.end_date }}</q-td>
                     <q-td>{{ props.row.tasks.length }}</q-td>
+                    <q-td>
+                      <q-btn color="red" label="Удалить" @click="deleteModule(props.row.id)"></q-btn>
+                    </q-td>
                   </q-tr>
                 </template>
               </q-table>
@@ -118,6 +121,7 @@ import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import { useQuery, useApolloClient, useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
+import { useQuasar } from 'quasar';
 
 const apolloClient = useApolloClient().client;
 const router = useRouter();
@@ -263,7 +267,6 @@ const columnsForModuleTable = [
   { name: 'end_date', label: 'End date', field: 'end_date', align: 'left' },
   { name: 'tasks', label: 'Tasks', field: 'tasks', align: 'left' }
 ];
-
 const GET_MODULES = gql`
   query {
     paginate_module(
@@ -287,6 +290,7 @@ const GET_MODULES = gql`
             name
           }
         }
+        id
       }
       paginatorInfo {
         count
@@ -304,6 +308,56 @@ const fetchModules = async () => {
   });
   modules.value = data.paginate_module.data;
 };
+const DELETE_MODULE = gql`
+  mutation deleteModule($id: String!) {
+    delete_module(id: $id) {
+      status
+      recordId
+    }
+  }
+`;
+const $q = useQuasar();
+const { mutate: deleteModuleMutation } = useMutation(DELETE_MODULE);
+function deleteModule(moduleId) {
+  $q.dialog({
+    title: 'Подтверждение',
+    message: 'Вы уверены, что хотите удалить этот модуль?',
+    ok: {
+      label: 'Да',
+      color: 'negative'
+    },
+    cancel: {
+      label: 'Нет',
+      color: 'primary'
+    },
+    persistent: true
+  })
+  .onOk(() => {
+    deleteModuleMutation({ id: moduleId })
+      .then(({ data }) => {
+        if (data.delete_module.status === 204) {
+          modules.value = modules.value.filter((module) => module.id !== moduleId);
+          $q.notify({
+            type: 'positive',
+            message: 'Модуль успешно удален'
+          });
+        }
+      })
+      .catch((error) => {
+        console.error('Ошибка при удалении модуля:', error);
+        $q.notify({
+          type: 'negative',
+          message: 'Ошибка при удалении модуля'
+        });
+      });
+  })
+  .onCancel(() => {
+    $q.notify({
+      type: 'info',
+      message: 'Удаление отменено'
+    });
+  });
+}
 //  КОНЕЦ --- 4.2. При выборе страницы Модули в контенте выводить таблицу с полями объекта Модуль и количество его задач в каждом статусе
 </script>
 
