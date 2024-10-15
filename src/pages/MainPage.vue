@@ -308,6 +308,7 @@ const fetchModules = async () => {
   });
   modules.value = data.paginate_module.data;
 };
+// Удаление модуля
 const DELETE_MODULE = gql`
   mutation deleteModule($id: String!) {
     delete_module(id: $id) {
@@ -358,6 +359,8 @@ function deleteModule(moduleId) {
     });
   });
 }
+// Создание модуля
+
 //  КОНЕЦ --- 4.2. При выборе страницы Модули в контенте выводить таблицу с полями объекта Модуль и количество его задач в каждом статусе
 </script>
 
