@@ -266,7 +266,7 @@ const columnsForModuleTable = [
 
 const GET_MODULES = gql`
   query {
-    paginate_type1(
+    paginate_module(
       page: 1
       perPage: 255
     ) {
@@ -302,7 +302,7 @@ const fetchModules = async () => {
     query: GET_MODULES,
     fetchPolicy: "network-only"
   });
-  modules.value = data.paginate_type1.data;
+  modules.value = data.paginate_module.data;
 };
 //  КОНЕЦ --- 4.2. При выборе страницы Модули в контенте выводить таблицу с полями объекта Модуль и количество его задач в каждом статусе
 </script>
