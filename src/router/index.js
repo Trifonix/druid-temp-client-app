@@ -13,7 +13,7 @@ const routes = [
     component: LoginView,
   },
   {
-    path: "/main",
+    path: "/",
     name: "main",
     component: MainView,
     meta: {
