@@ -1,39 +1,53 @@
 import { createRouter, createWebHistory } from "vue-router";
-import LoginPage from "../pages/LoginPage.vue";
-import MainPage from "../pages/MainPage.vue"; 
+
+import LoginView from "@/views/LoginView.vue";
+import MainView from "@/views/MainView.vue";
+import GroupMembersView from "@/views/groups/GroupMembersView.vue";
+import ModulesView from "@/views/modules/ModulesView.vue";
 
 const routes = [
-    {
-        path: "/",
-        name: "login",
-        component: LoginPage,
+  {
+    path: "/",
+    name: "login",
+    component: LoginView,
+  },
+  {
+    path: "/",
+    name: "main",
+    component: MainView,
+    meta: {
+      requiresAuth: true,
     },
-    {
-        path: "/main",
-        name: "main",
-        component: MainPage,
-        meta: {
-            requiresAuth: true,
-        },
-    },
+  },
+  {
+    path: "/groups/:groupId",
+    name: "group",
+    component: GroupMembersView,
+    props: true,
+  },
+  {
+    path: "/modules",
+    name: "modules",
+    component: ModulesView,
+  },
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes,
+  history: createWebHistory(),
+  routes,
 });
 
 router.beforeEach((to, from, next) => {
-    const isAuthenticated = !!localStorage.getItem("access_token");
-    if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (!isAuthenticated) {
-            next({ name: "login" });
-        } else {
-            next();
-        }
+  const isAuthenticated = !!localStorage.getItem("access_token");
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!isAuthenticated) {
+      next({ name: "login" });
     } else {
-        next();
+      next();
     }
+  } else {
+    next();
+  }
 });
 
 export default router;
