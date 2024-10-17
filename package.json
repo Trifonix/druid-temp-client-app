@@ -13,6 +13,7 @@
     "@vue/apollo-composable": "^4.2.1",
     "core-js": "^3.8.3",
     "graphql": "^16.9.0",
+    "pinia": "^2.2.4",
     "quasar": "^2.16.0",
     "vue": "^3.5.11",
     "vue-router": "^4.0.3",
