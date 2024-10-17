@@ -75,6 +75,6 @@ const loadTasks = () => {
 
 <style scoped>
 .tasks-page {
-  background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+  background: linear-gradient(115deg, #fdf3ff, #e1bee7);
 }
 </style>

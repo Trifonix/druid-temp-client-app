@@ -79,6 +79,6 @@ const addNewModule = () => {
 
 <style scoped>
 .modules-page {
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  background: linear-gradient(115deg, #e8fdfa, #bfebe2);
 }
 </style>
