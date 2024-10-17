@@ -24,8 +24,8 @@ export default {
 
 <style>
 .custom-notify {
-  font-size: 1.2em !important; /* Увеличенный размер шрифта для текста уведомления */
-  font-weight: bold !important; /* Жирный текст */
-  padding: 10px !important; /* Отступы вокруг текста */
+  font-size: 1.2em !important;
+  font-weight: bold !important;
+  padding: 10px !important;
 }
 </style>
