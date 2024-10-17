@@ -104,5 +104,6 @@ const handleInviteUser = async (input) => {
 <style scoped>
 .group-members-page {
   padding: 20px;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
 }
 </style>
