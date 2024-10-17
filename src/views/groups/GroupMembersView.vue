@@ -6,7 +6,6 @@
     />
 
     <h3>{{ selectedGroup.name }}</h3>
-    <h5>{{ selectedGroup.id }}</h5>
 
     <q-table
       v-if="members.length > 0"
