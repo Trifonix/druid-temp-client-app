@@ -82,6 +82,8 @@ const goToGroupPage = (group) => {
 const goToPage = (page) => {
   if (page.title === "Модули") {
     router.push({ name: "modules" });
+  } else if (page.title === "Мои задачи") {
+    router.push({ name: "tasks" });
   }
 };
 </script>
