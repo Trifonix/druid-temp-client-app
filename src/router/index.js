@@ -4,6 +4,7 @@ import LoginView from "@/views/LoginView.vue";
 import MainView from "@/views/MainView.vue";
 import GroupMembersView from "@/views/groups/GroupMembersView.vue";
 import ModulesView from "@/views/modules/ModulesView.vue";
+import TasksView from "@/views/tasks/TasksView.vue";
 
 const routes = [
   {
@@ -29,6 +30,11 @@ const routes = [
     path: "/modules",
     name: "modules",
     component: ModulesView,
+  },
+  {
+    path: "/tasks",
+    name: "tasks",
+    component: TasksView,
   },
 ];
 
