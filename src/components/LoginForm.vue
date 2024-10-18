@@ -1,5 +1,5 @@
 <template>
-  <q-card class="q-pa-md login-card" v-if="!isAuth.value">
+  <q-card class="q-pa-md login-card" v-if="!authStore.isAuthenticated">
     <q-card-section class="row items-center q-gutter-sm justify-center">
       <div class="col text-center">
         <div class="login-title">Вход в систему</div>
@@ -7,9 +7,9 @@
     </q-card-section>
 
     <q-card-section>
-      <q-form @submit.prevent="onLogin">
+      <q-form @submit.prevent="authHandler()">
         <q-input
-          v-model="email"
+          v-model="authStore.email"
           label="Email"
           type="email"
           filled
@@ -18,7 +18,7 @@
           required
         />
         <q-input
-          v-model="password"
+          v-model="authStore.password"
           label="Пароль"
           type="password"
           filled
@@ -31,7 +31,7 @@
           label="Задруидиться"
           color="primary"
           class="full-width"
-          :loading="loading"
+          :loading="authStore.isLoading"
         />
       </q-form>
     </q-card-section>
@@ -43,71 +43,34 @@
         label="Вернуться"
         color="primary"
         class="full-width"
-        @click="backToMainPage"
+        @click="router.push('/')"
       />
     </q-card-section>
   </q-card>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
-import { Notify } from "quasar";
+import { onMounted } from "vue";
+import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "vue-router";
-import { userSignIn } from "@/api";
 
 const router = useRouter();
-const loading = ref(false);
 
-const email = ref("");
-const password = ref("");
+const authStore = useAuthStore();
 
-const isAuth = ref(false);
+const authHandler = async () => {
+  const response = await authStore.login();
 
-const onLogin = async () => {
-  if (!email.value || !password.value) return;
-
-  loading.value = true;
-
-  try {
-    const data = await userSignIn({
-      login: email.value,
-      password: password.value,
-    });
-
-    if (data && data.userSignIn) {
-      const token = data.userSignIn.record.access_token;
-      const space = 1795;
-      localStorage.setItem("access_token", token);
-      localStorage.setItem("space", space);
-      isAuth.value = true;
-      Notify.create({
-        message: `Добро пожаловать!`,
-        color: "positive",
-        icon: "check_circle",
-        position: "top",
-        timeout: 2000,
-        classes: "custom-notify",
-      });
-
-      router.push({ name: "main" });
-    }
-  } catch (error) {
-    console.error("Ошибка авторизации:", error);
-    Notify.create({
-      message: "Ошибка входа. Попробуйте снова.",
-      color: "negative",
-      icon: "error",
-      position: "bottom",
-      timeout: 2000,
-      classes: "custom-notify",
-    });
-    isAuth.value = false;
-    if (localStorage.getItem("access_token"))
-      localStorage.removeItem("access_token");
-  } finally {
-    loading.value = false;
+  if (response instanceof Error) {
+    console.log("ошибка авторизации");
+  } else {
+    router.push("/");
   }
 };
+
+onMounted(() => {
+  authStore.checkAuth();
+});
 </script>
 
 <style scoped>
