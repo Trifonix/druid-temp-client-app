@@ -23,14 +23,27 @@
         </q-item-section>
       </q-item>
 
+      <q-item clickable key="modules" @click="goToPage('/modules')">
+        <q-item-section>
+          <q-item-label>Модули</q-item-label>
+        </q-item-section>
+      </q-item>
+
       <q-item
         clickable
-        v-for="page in allSpacePagesWithoutGroups"
-        :key="page.id"
-        @click="goToPage(page)"
+        v-for="module in moduleStore.modules"
+        :key="module.id"
+        @click="goToPage(`/modules/${module.id}`)"
+        class="nested-group"
       >
         <q-item-section>
-          <q-item-label>{{ page.title }}</q-item-label>
+          <q-item-label>{{ module.module_name }}</q-item-label>
+        </q-item-section>
+      </q-item>
+
+      <q-item clickable key="tasks" @click="goToPage('/tasks')">
+        <q-item-section>
+          <q-item-label>Мои задачи</q-item-label>
         </q-item-section>
       </q-item>
     </q-list>
@@ -42,6 +55,10 @@ import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import { getAllSpaceGroups, getAllSpacePages } from "@/api";
 import { apolloClient } from "@/apolloClient";
+
+import { useModulesStore } from "@/stores/modulesStore";
+
+const moduleStore = useModulesStore();
 
 const router = useRouter();
 
@@ -80,11 +97,7 @@ const goToGroupPage = (group) => {
 };
 
 const goToPage = (page) => {
-  if (page.title === "Модули") {
-    router.push({ name: "modules" });
-  } else if (page.title === "Мои задачи") {
-    router.push({ name: "tasks" });
-  }
+  router.push(page);
 };
 </script>
 
