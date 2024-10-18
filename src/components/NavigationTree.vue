@@ -57,8 +57,10 @@ import { getAllSpaceGroups, getAllSpacePages } from "@/api";
 import { apolloClient } from "@/apolloClient";
 
 import { useModulesStore } from "@/stores/modulesStore";
+import { useAuthStore } from "@/stores/authStore";
 
 const moduleStore = useModulesStore();
+const authStore = useAuthStore();
 
 const router = useRouter();
 
@@ -66,7 +68,7 @@ const logout = () => {
   localStorage.removeItem("access_token");
   localStorage.removeItem("space");
   apolloClient.clearStore();
-  router.push({ name: "login" });
+  router.push("/login");
 };
 
 const allSpaceGroups = ref([]);
