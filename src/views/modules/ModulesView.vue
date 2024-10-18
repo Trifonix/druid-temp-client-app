@@ -1,6 +1,38 @@
 <template>
   <PageLayout class="modules-page">
-    <q-btn label="Добавить модуль" color="primary" @click="addNewModule" />
+    <form class="row items-center full-width q-mb-sm">
+      <q-input
+        v-model="newModule.module_name"
+        label="Название модуля"
+        outlined
+        class="col q-mr-sm"
+        @keyup.enter="addNewModule"
+      />
+      <q-input
+        v-model="newModule.start_date"
+        label="Стартовая дата"
+        mask="date"
+        outlined
+        class="col q-mr-sm"
+        type="date"
+      />
+      <q-input
+        v-model="newModule.end_date"
+        label="Конечная дата"
+        mask="date"
+        outlined
+        class="col q-mr-sm"
+        type="date"
+      />
+
+      <q-btn
+        label="Добавить модуль"
+        color="primary"
+        class="q-mb-mt"
+        @click="addNewModule"
+      />
+    </form>
+
     <q-table
       :rows="modulesStore.modules"
       :columns="columnsForModuleTable"
@@ -33,13 +65,21 @@
 </template>
 
 <script setup>
+import { onMounted, ref } from "vue";
+
 import { useModulesStore } from "@/stores/modulesStore";
-import { onMounted } from "vue";
 import { useQuasar } from "quasar";
+
 import PageLayout from "@/components/PageLayout.vue";
 
 const modulesStore = useModulesStore();
 const $q = useQuasar();
+
+const newModule = ref({
+  module_name: "",
+  start_date: "",
+  end_date: "",
+});
 
 const columnsForModuleTable = [
   {
@@ -73,7 +113,19 @@ const deleteModuleHandler = async (moduleId) => {
 };
 
 const addNewModule = () => {
-  modulesStore.addNewModule($q);
+  const formattedModule = {
+    ...newModule.value,
+    start_date: convertDateToServerFormat(newModule.value.start_date),
+    end_date: convertDateToServerFormat(newModule.value.end_date),
+  };
+
+  modulesStore.addNewModule($q, formattedModule);
+};
+
+const convertDateToServerFormat = (date) => {
+  if (!date) return "";
+  const [year, month, day] = date.split("-");
+  return `${day}.${month}.${year}`;
 };
 </script>
 
