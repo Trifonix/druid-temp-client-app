@@ -24,6 +24,16 @@
         class="col q-mr-sm"
         type="date"
       />
+      <q-select
+        v-if="answerables.length > 0"
+        v-model="newModule.answerable"
+        :options="answerables"
+        label="Ответственный"
+        outlined
+        class="col q-mr-sm"
+        option-value="id"
+        option-label="select_name"
+      />
 
       <q-btn
         label="Добавить модуль"
@@ -68,17 +78,24 @@
 import { onMounted, ref } from "vue";
 
 import { useModulesStore } from "@/stores/modulesStore";
+import { useGroupStore } from "@/stores/groupStore";
+
 import { useQuasar } from "quasar";
 
 import PageLayout from "@/components/PageLayout.vue";
 
 const modulesStore = useModulesStore();
+const groupStore = useGroupStore();
+
+const answerables = ref([]);
+
 const $q = useQuasar();
 
 const newModule = ref({
   module_name: "",
   start_date: "",
   end_date: "",
+  answerable: "",
 });
 
 const columnsForModuleTable = [
@@ -104,10 +121,6 @@ const columnsForModuleTable = [
   { name: "tasks", label: "Tasks", field: "tasks", align: "left" },
 ];
 
-onMounted(() => {
-  modulesStore.fetchModules();
-});
-
 const deleteModuleHandler = async (moduleId) => {
   await modulesStore.deleteModuleHandler(moduleId, $q);
 };
@@ -127,6 +140,18 @@ const convertDateToServerFormat = (date) => {
   const [year, month, day] = date.split("-");
   return `${day}.${month}.${year}`;
 };
+
+onMounted(async () => {
+  await modulesStore.fetchModules();
+  const data = await groupStore.fetchMembers("2784767641474305072");
+
+  answerables.value = data.map((item) => {
+    return {
+      ...item,
+      select_name: item.fullname.first_name + " " + item.fullname.last_name,
+    };
+  });
+});
 </script>
 
 <style scoped>
