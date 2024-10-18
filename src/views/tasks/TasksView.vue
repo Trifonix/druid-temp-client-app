@@ -18,26 +18,17 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+
 import { useQuasar } from "quasar";
+
 import PageLayout from "@/components/PageLayout.vue";
 import { useQuery } from "@vue/apollo-composable";
-import gql from "graphql-tag";
+
+import { getAllTasks } from "@/api";
 
 const $q = useQuasar();
 
-const GET_TASKS = gql`
-  {
-    paginate_task(page: 1, perPage: 100) {
-      data {
-        id
-        name
-      }
-      paginatorInfo {
-        count
-      }
-    }
-  }
-`;
+const tasks = ref([]);
 
 const columnsForTaskTable = [
   {
@@ -54,23 +45,24 @@ const columnsForTaskTable = [
   },
 ];
 
-const tasks = ref([]);
+const loadTasks = async () => {
+  const response = await getAllTasks();
+
+  if (response) {
+    tasks.value = response;
+  }
+
+  // if (error.value) {
+  //   $q.notify({
+  //     type: "negative",
+  //     message: "Failed to load tasks",
+  //   });
+  // }
+};
 
 onMounted(() => {
   loadTasks();
 });
-
-const loadTasks = () => {
-  const { result, loading, error } = useQuery(GET_TASKS);
-  result.value?.paginate_task.data &&
-    (tasks.value = result.value.paginate_task.data);
-  if (error.value) {
-    $q.notify({
-      type: "negative",
-      message: "Failed to load tasks",
-    });
-  }
-};
 </script>
 
 <style scoped>
