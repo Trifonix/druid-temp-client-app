@@ -28,7 +28,7 @@
         />
         <q-btn
           type="submit"
-          label="Войти"
+          label="Задруидиться"
           color="primary"
           class="full-width"
           :loading="loading"
