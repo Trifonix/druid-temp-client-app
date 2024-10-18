@@ -5,10 +5,11 @@ import MainView from "@/views/MainView.vue";
 import GroupMembersView from "@/views/groups/GroupMembersView.vue";
 import ModulesView from "@/views/modules/ModulesView.vue";
 import TasksView from "@/views/tasks/TasksView.vue";
+import ModuleView from "@/views/modules/ModuleView.vue";
 
 const routes = [
   {
-    path: "/",
+    path: "/login",
     name: "login",
     component: LoginView,
   },
@@ -30,6 +31,11 @@ const routes = [
     path: "/modules",
     name: "modules",
     component: ModulesView,
+  },
+  {
+    path: "/modules/:moduleId",
+    name: "module",
+    component: ModuleView,
   },
   {
     path: "/tasks",
