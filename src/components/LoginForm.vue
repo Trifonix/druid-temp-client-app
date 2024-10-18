@@ -1,5 +1,5 @@
 <template>
-  <q-card class="q-pa-md login-card">
+  <q-card class="q-pa-md login-card" v-if="!isAuth.value">
     <q-card-section class="row items-center q-gutter-sm justify-center">
       <div class="col text-center">
         <div class="login-title">Вход в систему</div>
@@ -36,10 +36,21 @@
       </q-form>
     </q-card-section>
   </q-card>
+
+  <q-card class="q-pa-md login-card" v-else>
+    <q-card-section class="row items-center q-gutter-sm justify-center">
+      <q-btn
+        label="Вернуться"
+        color="primary"
+        class="full-width"
+        @click="backToMainPage"
+      />
+    </q-card-section>
+  </q-card>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { Notify } from "quasar";
 import { useRouter } from "vue-router";
 import { userSignIn } from "@/api";
@@ -49,6 +60,8 @@ const loading = ref(false);
 
 const email = ref("");
 const password = ref("");
+
+const isAuth = ref(false);
 
 const onLogin = async () => {
   if (!email.value || !password.value) return;
@@ -66,6 +79,7 @@ const onLogin = async () => {
       const space = 1795;
       localStorage.setItem("access_token", token);
       localStorage.setItem("space", space);
+      isAuth.value = true;
       Notify.create({
         message: `Добро пожаловать!`,
         color: "positive",
@@ -87,6 +101,7 @@ const onLogin = async () => {
       timeout: 2000,
       classes: "custom-notify",
     });
+    isAuth.value = false;
     if (localStorage.getItem("access_token"))
       localStorage.removeItem("access_token");
   } finally {
