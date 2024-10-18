@@ -1,5 +1,11 @@
 import { defineStore } from "pinia";
-import { getModules, deleteModule, createModule, getModule } from "@/api";
+import {
+  getModules,
+  deleteModule,
+  createModule,
+  getModule,
+  createTask,
+} from "@/api";
 import { date } from "quasar";
 
 export const useModulesStore = defineStore("modules", {
@@ -72,6 +78,7 @@ export const useModulesStore = defineStore("modules", {
           });
       });
     },
+
     async addNewModule($q, newModule) {
       const lastModuleNumber = Math.max(
         ...this.modules.map((module) => {
@@ -121,6 +128,52 @@ export const useModulesStore = defineStore("modules", {
         $q.notify({
           type: "negative",
           message: "Ошибка при создании модуля",
+        });
+      }
+    },
+
+    async addNewTask($q, moduleId, newTask) {
+      const input = {
+        name: newTask.name,
+        task_description: newTask.task_description,
+        worker: newTask.worker,
+        for_module: {
+          object: {
+            id: moduleId,
+            name: newTask.for_module.name,
+          },
+        },
+      };
+
+      console.log(input);
+
+      try {
+        const { status, record } = await createTask(input);
+        if (status === 200) {
+          const module = this.modules.find((module) => module.id === moduleId);
+          if (module) {
+            module.tasks.push(record);
+            $q.notify({
+              type: "positive",
+              message: "Задача успешно создана!",
+            });
+          } else {
+            $q.notify({
+              type: "negative",
+              message: "Модуль не найден.",
+            });
+          }
+        } else {
+          $q.notify({
+            type: "negative",
+            message: "Не удалось создать задачу.",
+          });
+        }
+      } catch (error) {
+        console.error("Ошибка при создании задачи:", error);
+        $q.notify({
+          type: "negative",
+          message: "Ошибка при создании задачи",
         });
       }
     },

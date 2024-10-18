@@ -1,5 +1,7 @@
 <template>
   <PageLayout class="module-page">
+    <CreateTaskForm :module="module" />
+
     <h3>{{ module.module_name }}</h3>
 
     <q-table
@@ -21,6 +23,7 @@ import { useRoute } from "vue-router";
 import { useModulesStore } from "@/stores/modulesStore";
 
 import PageLayout from "@/components/PageLayout.vue";
+import CreateTaskForm from "@/components/createTaskForm.vue";
 
 const route = useRoute();
 const moduleId = ref(route.params.moduleId);

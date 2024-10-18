@@ -7,48 +7,87 @@
       outlined
     />
     <q-input
-      v-model="taskData.surname"
-      label="Фамилия"
+      v-model="taskData.task_description"
+      label="Описание"
       class="col q-mr-sm"
       outlined
     />
-    <q-input
-      v-model="taskData.email"
-      label="Email"
-      class="col q-mr-sm"
+
+    <q-select
+      v-model="taskData.worker"
+      :options="workers"
+      label="Исполнитель"
       outlined
-      type="email"
+      class="col q-mr-sm"
+      option-value="id"
+      option-label="select_name"
     />
+
     <q-btn
-      label="Пригласить в эту группу"
+      label="Создать задачу"
       color="primary"
-      @click="inviteUserHandler"
+      @click="createTaskHandler"
       class="q-mb-mt"
     />
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
+
+import { useModulesStore } from "@/stores/modulesStore";
+import { useGroupStore } from "@/stores/groupStore";
+
+import { useQuasar } from "quasar";
 
 const props = defineProps({
-  selectedGroup: Object,
+  module: Object,
 });
 
-const emit = defineEmits(["inviteUser"]);
+const emit = defineEmits(["createTask"]);
 
-const taskData = ref({ name: "", surname: "", email: "" });
+const $q = useQuasar();
 
-const inviteUserHandler = () => {
-  const user = {
-    name: inviteData.value.name,
-    surname: inviteData.value.surname,
-    email: inviteData.value.email,
-    group_id: props.selectedGroup.id,
+const modulesStore = useModulesStore();
+const groupStore = useGroupStore();
+
+const taskData = ref({
+  name: "",
+  task_description: "",
+  worker: "",
+});
+
+const workers = ref([]);
+
+const createTaskHandler = () => {
+  const newTask = {
+    name: taskData.value.name,
+    task_description: taskData.value.task_description,
+    worker: taskData.value.worker,
+    for_module: {
+      name: props.module.name,
+    },
   };
 
-  emit("inviteUser", user);
+  modulesStore.addNewTask($q, props.module.id, newTask);
+  taskData.value = {
+    name: "",
+    task_description: "",
+    worker: "",
+  };
 };
+
+onMounted(async () => {
+  await modulesStore.fetchModules();
+  const data = await groupStore.fetchMembers("2101692165904710833");
+
+  workers.value = data.map((item) => {
+    return {
+      ...item,
+      select_name: item.fullname.first_name + " " + item.fullname.last_name,
+    };
+  });
+});
 </script>
 
 <style scoped>

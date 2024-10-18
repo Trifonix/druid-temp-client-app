@@ -215,6 +215,40 @@ export const createModule = async (input) => {
   return data.create_module;
 };
 
+export const createTask = async (input) => {
+  const { data } = await apolloClient.mutate({
+    mutation: gql`
+      mutation ($input: create_task_input!) {
+        create_task(input: $input) {
+          status
+          record {
+            id
+            name
+            task_description
+            worker {
+              object {
+                fullname {
+                  first_name
+                  last_name
+                }
+              }
+            }
+            status
+            for_module {
+              object {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { input },
+  });
+  return data.create_module;
+};
+
 export const userSignIn = async (input) => {
   const { data } = await apolloClient.mutate({
     mutation: gql`
