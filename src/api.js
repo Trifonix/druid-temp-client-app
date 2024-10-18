@@ -71,8 +71,17 @@ export const getAllTasks = async () => {
       {
         paginate_task(page: 1, perPage: 100) {
           data {
-            id
             name
+            task_description
+            worker {
+              object {
+                fullname {
+                  first_name
+                  last_name
+                }
+              }
+            }
+            status
           }
           paginatorInfo {
             count
@@ -124,22 +133,27 @@ export const getModules = async () => {
 export const getModule = async (moduleId) => {
   const { data } = await apolloClient.query({
     query: gql`
-      query {
+      query ($id: String!) {
         get_module(id: $id) {
           id
+          name
           module_name
+          start_date
+          end_date
           tasks {
-              object {
-                  id
-                  name
-              }
+            object {
+              id
+              name
+            }
           }
+        }
       }
     `,
     variables: { id: moduleId },
     fetchPolicy: "network-only",
   });
-  return data.paginate_module.data;
+
+  return data.get_module;
 };
 
 export const inviteUser = async (input) => {
@@ -209,6 +223,44 @@ export const userSignIn = async (input) => {
       }
     `,
     variables: { input },
+  });
+  return data;
+};
+
+export const getMyUserData = async () => {
+  const { data } = await apolloClient.query({
+    query: gql`
+      query userMy {
+        userMy {
+          id
+          current_space_id
+          email
+          name
+          surname
+          socials
+          spaces
+          avatar
+          birthdate
+          last_space_id
+          telegram_chat_id
+          config {
+            theme
+            telegramNotify
+            sortSpaces
+            meetingRoom
+            headerIcons
+            timezone
+            headerIconsMobile
+            locale
+            __typename
+          }
+          updated_at
+          created_at
+          deleted_at
+        }
+      }
+    `,
+    fetchPolicy: "network-only",
   });
   return data;
 };
