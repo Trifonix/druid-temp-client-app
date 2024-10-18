@@ -9,7 +9,25 @@
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td>{{ props.row.name }}</q-td>
-          <q-td>{{ props.row.id }}</q-td>
+          <q-td>{{ props.row.task_description }}</q-td>
+          <q-td>
+            {{
+              (props.row.worker?.object?.fullname?.first_name || "") +
+              " " +
+              (props.row.worker?.object?.fullname?.last_name || "")
+            }}
+          </q-td>
+          <q-td>
+            {{
+              props.row.status === "4123856274852877817"
+                ? "Назначена"
+                : props.row.status === "4210340405255089394"
+                ? "Выполнена"
+                : props.row.status === "5451118349350597926"
+                ? "Завершена"
+                : "Неизвестно"
+            }}
+          </q-td>
         </q-tr>
       </template>
     </q-table>
@@ -38,9 +56,21 @@ const columnsForTaskTable = [
     align: "left",
   },
   {
-    name: "id",
-    label: "Task Id",
-    field: "id",
+    name: "task_description",
+    label: "Desc",
+    field: "task_description",
+    align: "left",
+  },
+  {
+    name: "worker",
+    label: "Worker",
+    field: "worker",
+    align: "left",
+  },
+  {
+    name: "status",
+    label: "Status",
+    field: "status",
     align: "left",
   },
 ];
