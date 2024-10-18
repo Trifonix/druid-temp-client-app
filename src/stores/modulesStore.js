@@ -85,6 +85,11 @@ export const useModulesStore = defineStore("modules", {
       const input = {
         name: `Тестовый модуль ${newModuleNumber}`,
         module_name: newModule.module_name,
+        answerable: {
+          "4186684371488381928": {
+            objectId: newModule.answerable.id,
+          },
+        },
         start_date: newModule.start_date,
         end_date: newModule.end_date,
       };
