@@ -26,22 +26,39 @@ const routes = [
     name: "group",
     component: GroupMembersView,
     props: true,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/modules",
     name: "modules",
     component: ModulesView,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/modules/:moduleId",
     name: "module",
     component: ModuleView,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/tasks",
     name: "tasks",
     component: TasksView,
+    meta: {
+      requiresAuth: true,
+    },
   },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "login",
+    component: LoginView,
+  }
 ];
 
 const router = createRouter({
