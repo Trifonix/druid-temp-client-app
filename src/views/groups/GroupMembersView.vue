@@ -1,15 +1,18 @@
 <template>
   <PageLayout class="group-members-page">
     <InviteUserForm
-      :selectedGroup="selectedGroup"
-      @inviteUser="handleInviteUser"
+      v-if="groupStore.selectedGroup.id"
+      :selectedGroup="groupStore.selectedGroup"
+      @inviteUser="groupStore.handleInviteUser"
     />
 
-    <h3>{{ selectedGroup.name }}</h3>
+    <h3 v-if="groupStore.selectedGroup.name">
+      {{ groupStore.selectedGroup.name }}
+    </h3>
 
     <q-table
-      v-if="members.length > 0"
-      :rows="members"
+      v-if="groupStore.members.length > 0"
+      :rows="groupStore.members"
       :columns="columns"
       row-key="id"
     />
@@ -21,21 +24,15 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
+import { useGroupStore } from "@/stores/groupStore";
 
 import InviteUserForm from "@/components/InviteUserForm.vue";
 import PageLayout from "@/components/PageLayout.vue";
 
-import { getGroupMembers, inviteUser, getAllSpaceGroups } from "@/api";
-
 const route = useRoute();
-const groupId = ref(route.params.groupId);
-
-const allSpaceGroups = ref([]);
-const selectedGroup = ref({});
-
-const members = ref([]);
+const groupStore = useGroupStore();
 
 const columns = [
   {
@@ -58,46 +55,17 @@ const columns = [
   },
 ];
 
-const fetchAllSpaceGroups = async () => {
-  allSpaceGroups.value = await getAllSpaceGroups();
-};
-
-const fetchMembers = async (groupId) => {
-  members.value = await getGroupMembers(groupId);
-};
-
-const initializeGroup = () => {
-  if (groupId.value && allSpaceGroups.value.length > 0) {
-    selectedGroup.value = allSpaceGroups.value.find(
-      (group) => group.id === groupId.value
-    );
-    if (selectedGroup.value) {
-      fetchMembers(selectedGroup.value.id);
-    }
-  }
-};
-
 onMounted(async () => {
-  await fetchAllSpaceGroups();
-  initializeGroup();
+  await groupStore.fetchAllSpaceGroups();
+  groupStore.initializeGroup(route.params.groupId);
 });
 
 watch(
   () => route.params.groupId,
   (newGroupId) => {
-    groupId.value = newGroupId;
-    initializeGroup();
+    groupStore.initializeGroup(newGroupId);
   }
 );
-
-const handleInviteUser = async (input) => {
-  const { status } = await inviteUser(input);
-  if (status === 200) {
-    alert("Пользователь успешно приглашен!");
-  } else {
-    alert("Не удалось пригласить пользователя.");
-  }
-};
 </script>
 
 <style scoped>
