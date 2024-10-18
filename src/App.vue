@@ -3,7 +3,7 @@
     <q-header elevated class="glossy">
       <q-toolbar>
         <q-toolbar-title>
-          Простое реактивное приложение по ведению проекта
+          Система по ведению проекта | Модули и Задачи
         </q-toolbar-title>
 
         <div>Druid</div>
