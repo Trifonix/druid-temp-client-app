@@ -3,7 +3,7 @@
     <q-header elevated class="glossy">
       <q-toolbar>
         <q-toolbar-title>
-          Система по ведению проекта | Модули и Задачи
+          Система по ведению проекта "Строительство медицинского центра" | г. Москва
         </q-toolbar-title>
 
         <div>Druid</div>
