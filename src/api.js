@@ -65,6 +65,27 @@ export const getAllSpacePages = async () => {
   return data.pages.data;
 };
 
+export const getAllTasks = async () => {
+  const { data } = await apolloClient.query({
+    query: gql`
+      {
+        paginate_task(page: 1, perPage: 100) {
+          data {
+            id
+            name
+          }
+          paginatorInfo {
+            count
+          }
+        }
+      }
+    `,
+    fetchPolicy: "network-only",
+  });
+
+  return data.paginate_task.data;
+};
+
 export const getModules = async () => {
   const { data } = await apolloClient.query({
     query: gql`
@@ -95,6 +116,27 @@ export const getModules = async () => {
         }
       }
     `,
+    fetchPolicy: "network-only",
+  });
+  return data.paginate_module.data;
+};
+
+export const getModule = async (moduleId) => {
+  const { data } = await apolloClient.query({
+    query: gql`
+      query {
+        get_module(id: $id) {
+          id
+          module_name
+          tasks {
+              object {
+                  id
+                  name
+              }
+          }
+      }
+    `,
+    variables: { id: moduleId },
     fetchPolicy: "network-only",
   });
   return data.paginate_module.data;
