@@ -62,7 +62,7 @@ export const useModulesStore = defineStore("modules", {
           });
       });
     },
-    async addNewModule($q) {
+    async addNewModule($q, newModule) {
       const lastModuleNumber = Math.max(
         ...this.modules.map((module) => {
           const match = module.module_name.match(/Тест (\d+)/);
@@ -71,17 +71,14 @@ export const useModulesStore = defineStore("modules", {
         0
       );
       const newModuleNumber = lastModuleNumber + 1;
-      const today = date.formatDate(new Date(), "DD.MM.YYYY");
-      const tomorrow = date.formatDate(
-        new Date(Date.now() + 86400000),
-        "DD.MM.YYYY"
-      );
+
       const input = {
         name: `Тестовый модуль ${newModuleNumber}`,
-        module_name: `Тест ${newModuleNumber}`,
-        start_date: today,
-        end_date: tomorrow,
+        module_name: newModule.module_name,
+        start_date: newModule.start_date,
+        end_date: newModule.end_date,
       };
+
       try {
         const { status, record } = await createModule(input);
         if (status === 200) {
