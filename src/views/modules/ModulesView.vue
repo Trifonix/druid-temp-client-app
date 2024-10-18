@@ -126,13 +126,23 @@ const deleteModuleHandler = async (moduleId) => {
 };
 
 const addNewModule = () => {
-  const formattedModule = {
-    ...newModule.value,
-    start_date: convertDateToServerFormat(newModule.value.start_date),
-    end_date: convertDateToServerFormat(newModule.value.end_date),
-  };
+  if (newModule.value.answerable) {
+    const { select_name, ...answerableWithoutSelectName } =
+      newModule.value.answerable;
 
-  modulesStore.addNewModule($q, formattedModule);
+    const formattedModule = {
+      ...newModule.value,
+      start_date: convertDateToServerFormat(newModule.value.start_date),
+      end_date: convertDateToServerFormat(newModule.value.end_date),
+      answerable: answerableWithoutSelectName,
+    };
+
+    console.log(formattedModule);
+
+    modulesStore.addNewModule($q, formattedModule);
+  } else {
+    console.error("Selected answerable not found");
+  }
 };
 
 const convertDateToServerFormat = (date) => {
