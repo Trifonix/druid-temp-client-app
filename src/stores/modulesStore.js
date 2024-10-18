@@ -1,15 +1,25 @@
 import { defineStore } from "pinia";
-import { getModules, deleteModule, createModule } from "@/api";
+import { getModules, deleteModule, createModule, getModule } from "@/api";
 import { date } from "quasar";
 
 export const useModulesStore = defineStore("modules", {
   state: () => ({
     modules: [],
   }),
+
   actions: {
     async fetchModules() {
       this.modules = await getModules();
     },
+
+    async fetchModule(moduleId) {
+      this.modules.push(await getModule(moduleId));
+    },
+
+    getModuleById(moduleId) {
+      return this.modules.find((module) => module.id === moduleId) || null;
+    },
+
     deleteModuleHandler(moduleId, $q) {
       return new Promise((resolve) => {
         $q.dialog({
