@@ -101,6 +101,7 @@ export const getModules = async () => {
       query {
         paginate_module(page: 1, perPage: 255) {
           data {
+            id
             module_name
             answerable {
               object {
