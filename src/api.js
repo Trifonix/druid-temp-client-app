@@ -188,13 +188,21 @@ export const deleteModule = async (id) => {
 export const createModule = async (input) => {
   const { data } = await apolloClient.mutate({
     mutation: gql`
-      mutation createModule($input: create_module_input!) {
+      mutation ($input: create_module_input!) {
         create_module(input: $input) {
           status
-          recordId
           record {
             id
+            name
             module_name
+            answerable {
+              object {
+                fullname {
+                  first_name
+                  last_name
+                }
+              }
+            }
             start_date
             end_date
           }
