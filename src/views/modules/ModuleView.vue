@@ -5,7 +5,7 @@
     <h4>Задачи модуля |- {{ module.module_name }} -|</h4>
 
     <q-table
-      v-if="module.tasks"
+      v-if="module.tasks && module.tasks.length > 0"
       :rows="module.tasks"
       :columns="columnsForTaskTable"
       row-key="name"
