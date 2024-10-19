@@ -8,6 +8,7 @@
       v-if="module.tasks && module.tasks.length > 0"
       :rows="module.tasks"
       :columns="columnsForTaskTable"
+      row-key="id"
     >
       <template v-slot:body="props">
         <q-tr :props="props">
