@@ -116,6 +116,16 @@ export const getModules = async () => {
             tasks {
               object {
                 name
+                task_description
+                worker {
+                  object {
+                    fullname {
+                      first_name
+                      last_name
+                    }
+                  }
+                }
+                status
               }
             }
             id
@@ -145,6 +155,16 @@ export const getModule = async (moduleId) => {
             object {
               id
               name
+              task_description
+              worker {
+                object {
+                  fullname {
+                    first_name
+                    last_name
+                  }
+                }
+              }
+              status
             }
           }
         }

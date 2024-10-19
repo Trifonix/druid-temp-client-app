@@ -2,14 +2,39 @@
   <PageLayout class="module-page">
     <CreateTaskForm :module="module" />
 
-    <h3>{{ module.module_name }}</h3>
+    <h4>Задачи модуля |- {{ module.module_name }} -|</h4>
 
     <q-table
-      v-if="module.tasks > 0"
+      v-if="module.tasks"
       :rows="module.tasks"
       :columns="columnsForTaskTable"
-      row-key="id"
-    />
+      row-key="name"
+    >
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td>{{ props.row.name }}</q-td>
+          <q-td>{{ props.row.task_description }}</q-td>
+          <q-td>
+            {{
+              (props.row.worker?.object?.fullname?.first_name || "") +
+              " " +
+              (props.row.worker?.object?.fullname?.last_name || "")
+            }}
+          </q-td>
+          <q-td>
+            {{
+              props.row.status === "4123856274852877817"
+                ? "Назначена"
+                : props.row.status === "4210340405255089394"
+                ? "Выполнена"
+                : props.row.status === "5451118349350597926"
+                ? "Завершена"
+                : "Неизвестно"
+            }}
+          </q-td>
+        </q-tr>
+      </template>
+    </q-table>
 
     <div v-else>
       <h6>Кажется, в этом модуле нет задач...</h6>
@@ -60,7 +85,14 @@ const columnsForTaskTable = [
 ];
 
 const initializeModule = () => {
-  module.value = moduleStore.getModuleById(moduleId.value);
+  const moduleData = moduleStore.getModuleById(moduleId.value);
+  if (moduleData) {
+    const tasks = moduleData.tasks.map(task => task.object);
+    module.value = {
+      ...moduleData,
+      tasks,
+    };
+  }
 };
 
 watch(
@@ -83,6 +115,6 @@ onMounted(async () => {
 
 <style scoped>
 .module-page {
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  background: linear-gradient(115deg, #fff3f3, #e7bebe);
 }
 </style>
