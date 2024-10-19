@@ -8,11 +8,10 @@
       v-if="module.tasks && module.tasks.length > 0"
       :rows="module.tasks"
       :columns="columnsForTaskTable"
-      row-key="name"
     >
       <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td>{{ props.row.name }}</q-td>
+          <q-td>{{ props.row?.name }}</q-td>
           <q-td>{{ props.row.task_description }}</q-td>
           <q-td>
             {{
@@ -104,13 +103,19 @@ watch(
 );
 
 onMounted(async () => {
-  await initializeModule();
-
-  if (!module.value) {
-    await moduleStore.fetchModule(moduleId.value);
-    initializeModule();
-  }
+    await initializeModule();
+    if (!module.value) {
+        await moduleStore.fetchModule(moduleId.value);
+        initializeModule();
+    }
 });
+
+watch(
+    () => moduleStore.modules,
+    () => {
+        initializeModule();
+    }
+);
 </script>
 
 <style scoped>

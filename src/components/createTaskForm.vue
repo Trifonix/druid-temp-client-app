@@ -2,17 +2,16 @@
   <div class="create-task-form row items-center full-width">
     <q-input
       v-model="taskData.name"
-      label="Название"
+      label="Название задачи"
       class="col q-mr-sm"
       outlined
     />
     <q-input
       v-model="taskData.task_description"
-      label="Описание"
+      label="Описание задачи"
       class="col q-mr-sm"
       outlined
     />
-
     <q-select
       v-model="taskData.worker"
       :options="workers"
@@ -22,7 +21,6 @@
       option-value="id"
       option-label="select_name"
     />
-
     <q-btn
       label="Создать задачу"
       color="primary"
@@ -64,9 +62,6 @@ const createTaskHandler = () => {
     name: taskData.value.name,
     task_description: taskData.value.task_description,
     worker: taskData.value.worker,
-    for_module: {
-      name: props.module.name,
-    },
   };
 
   modulesStore.addNewTask($q, props.module.id, newTask);

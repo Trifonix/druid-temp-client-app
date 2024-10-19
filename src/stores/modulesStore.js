@@ -148,26 +148,37 @@ export const useModulesStore = defineStore("modules", {
             const input = {
                 name: newTask.name,
                 task_description: newTask.task_description,
-                worker: newTask.worker,
+                worker: {
+                    "4186684371488381928": {
+                        objectId: newTask.worker.id,
+                    },
+                },
                 for_module: {
-                    object: {
-                        id: moduleId,
-                        name: newTask.for_module.name,
+                    "1566928292437914288": {
+                        objectId: moduleId,
                     },
                 },
             };
-
             try {
                 const { status, record } = await createTask(input);
                 if (status === 200) {
-                    const module = this.modules.find(
+                    const moduleIndex = this.modules.findIndex(
                         (module) => module.id === moduleId
                     );
-                    if (module) {
-                        module.tasks.push(record);
+                    if (moduleIndex !== -1) {
+                        this.modules = this.modules.map((module, index) => {
+                            if (index === moduleIndex) {
+                                return {
+                                    ...module,
+                                    tasks: [...module.tasks, record],
+                                };
+                            }
+                            return module;
+                        });
+        
                         $q.notify({
                             type: "positive",
-                            message: "Задача успешно создана!",
+                            message: "Задача создана в этом модуле!",
                         });
                     } else {
                         $q.notify({
@@ -188,6 +199,6 @@ export const useModulesStore = defineStore("modules", {
                     message: "Ошибка при создании задачи",
                 });
             }
-        },
+        },                
     },
 });

@@ -71,6 +71,7 @@ export const getAllTasks = async () => {
       {
         paginate_task(page: 1, perPage: 100) {
           data {
+            id
             name
             task_description
             worker {
@@ -115,6 +116,7 @@ export const getModules = async () => {
             end_date
             tasks {
               object {
+                id
                 name
                 task_description
                 worker {
@@ -128,7 +130,6 @@ export const getModules = async () => {
                 status
               }
             }
-            id
           }
           paginatorInfo {
             count
@@ -266,7 +267,7 @@ export const createTask = async (input) => {
     `,
     variables: { input },
   });
-  return data.create_module;
+  return data.create_task;
 };
 
 export const userSignIn = async (input) => {
