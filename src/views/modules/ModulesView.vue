@@ -60,7 +60,7 @@
           </q-td>
           <q-td>{{ props.row.start_date }}</q-td>
           <q-td>{{ props.row.end_date }}</q-td>
-          <q-td>{{ props.row.tasks.length }}</q-td>
+          <q-td>{{ getTasksStatus(props.row.tasks) }}</q-td>
           <q-td>
             <q-btn
               color="red"
@@ -118,7 +118,7 @@ const columnsForModuleTable = [
     align: "left",
   },
   { name: "end_date", label: "End date", field: "end_date", align: "left" },
-  { name: "tasks", label: "Tasks", field: "tasks", align: "left" },
+  { name: "tasks", label: "Tasks", field: "tasks", align: "center" },
 ];
 
 const deleteModuleHandler = async (moduleId) => {
@@ -149,6 +149,13 @@ const convertDateToServerFormat = (date) => {
   if (!date) return "";
   const [year, month, day] = date.split("-");
   return `${day}.${month}.${year}`;
+};
+
+const getTasksStatus = (tasks) => {
+  const assignedTasks = tasks.filter(task => task.object.status === '4123856274852877817').length;
+  const completedTasks = tasks.filter(task => task.object.status === '4210340405255089394').length;
+  const finishedTasks = tasks.filter(task => task.object.status === '5451118349350597926').length;
+  return `Назначено: ${assignedTasks}, Выполнено: ${completedTasks}, Завершено: ${finishedTasks}`;
 };
 
 onMounted(async () => {
