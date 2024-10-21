@@ -166,16 +166,20 @@ export const useModulesStore = defineStore("modules", {
                         (module) => module.id === moduleId
                     );
                     if (moduleIndex !== -1) {
-                        this.modules = this.modules.map((module, index) => {
-                            if (index === moduleIndex) {
-                                return {
-                                    ...module,
-                                    tasks: [...module.tasks, record],
-                                };
-                            }
-                            return module;
-                        });
-        
+                        const updatedTasks = [
+                            ...this.modules[moduleIndex].tasks,
+                            {
+                                object: {
+                                    ...record,
+                                },
+                                __typename: "module_tasks_object",
+                            },
+                        ];
+                        this.modules = this.modules.map((module, index) =>
+                            index === moduleIndex
+                                ? { ...module, tasks: updatedTasks }
+                                : module
+                        );
                         $q.notify({
                             type: "positive",
                             message: "Задача создана в этом модуле!",

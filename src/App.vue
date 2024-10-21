@@ -18,20 +18,9 @@
 </template>
 
 <script>
-// import { onMounted } from "vue";
-
-// import { useAuthStore } from "@/stores/authStore";
-
-// const authStore = useAuthStore();
-
 export default {
   name: "App",
 };
-
-// onMounted(async () => {
-//   await authStore.fetchUser();
-//   console.log(authStore.user);
-// });
 </script>
 
 <style>

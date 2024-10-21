@@ -77,17 +77,9 @@ const columnsForTaskTable = [
 
 const loadTasks = async () => {
   const response = await getAllTasks();
-
   if (response) {
     tasks.value = response;
   }
-
-  // if (error.value) {
-  //   $q.notify({
-  //     type: "negative",
-  //     message: "Failed to load tasks",
-  //   });
-  // }
 };
 
 onMounted(() => {
