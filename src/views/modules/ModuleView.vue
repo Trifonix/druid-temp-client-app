@@ -32,6 +32,11 @@
                 : "Неизвестно"
             }}
           </q-td>
+          <q-btn
+              color="red"
+              label="Удалить задачу"
+              @click="deleteTaskHandler(props.row.id, moduleId)"
+          ></q-btn>
         </q-tr>
       </template>
     </q-table>
@@ -46,6 +51,7 @@
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useModulesStore } from "@/stores/modulesStore";
+import { useQuasar } from "quasar";
 
 import PageLayout from "@/components/PageLayout.vue";
 import CreateTaskForm from "@/components/createTaskForm.vue";
@@ -56,6 +62,7 @@ const moduleId = ref(route.params.moduleId);
 const moduleStore = useModulesStore();
 
 const module = ref({});
+const $q = useQuasar();
 
 const columnsForTaskTable = [
   {
@@ -93,6 +100,10 @@ const initializeModule = () => {
       tasks,
     };
   }
+};
+
+const deleteTaskHandler = async (taskId, moduleId) => {
+  await moduleStore.deleteTaskHandler(moduleId, taskId, $q);
 };
 
 watch(

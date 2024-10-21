@@ -207,6 +207,21 @@ export const deleteModule = async (id) => {
   return data.delete_module;
 };
 
+export const deleteTask = async (id) => {
+  const { data } = await apolloClient.mutate({
+    mutation: gql`
+      mutation deleteTask($id: String!) {
+        delete_task(id: $id) {
+          status
+          recordId
+        }
+      }
+    `,
+    variables: { id },
+  });
+  return data.delete_task;
+};
+
 export const createModule = async (input) => {
   const { data } = await apolloClient.mutate({
     mutation: gql`

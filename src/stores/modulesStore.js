@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import {
     getModules,
     deleteModule,
+    deleteTask,
     createModule,
     getModule,
     createTask,
@@ -77,6 +78,69 @@ export const useModulesStore = defineStore("modules", {
                         });
                         resolve(false);
                     });
+            });
+        },
+
+        deleteTaskHandler(moduleId, taskId, $q) {
+            return new Promise((resolve) => {
+                $q.dialog({
+                    title: "Подтверждение",
+                    message: "Вы уверены, что хотите удалить эту задачу?",
+                    ok: {
+                        label: "Да",
+                        color: "negative",
+                    },
+                    cancel: {
+                        label: "Нет",
+                        color: "primary",
+                    },
+                    persistent: true,
+                })
+                .onOk(async () => {
+                    try {
+                        const { status } = await deleteTask(taskId);
+                        if (status === 204) {
+                            const moduleIndex = this.modules.findIndex(
+                                (module) => module.id === moduleId
+                            );
+                            if (moduleIndex !== -1) {
+                                const updatedTasks = this.modules[moduleIndex].tasks.filter(
+                                    task => task.object.id !== taskId
+                                );
+                                this.modules = this.modules.map((module, index) =>
+                                    index === moduleIndex
+                                        ? { ...module, tasks: updatedTasks }
+                                        : module
+                                );
+                            }
+                            $q.notify({
+                                type: "positive",
+                                message: "Задача успешно удалена",
+                            });
+                            resolve(true);
+                        } else {
+                            $q.notify({
+                                type: "negative",
+                                message: "Ошибка при удалении задачи",
+                            });
+                            resolve(false);
+                        }
+                    } catch (error) {
+                        console.error("Ошибка при удалении задачи:", error);
+                        $q.notify({
+                            type: "negative",
+                            message: "Ошибка при удалении задачи",
+                        });
+                        resolve(false);
+                    }
+                })
+                .onCancel(() => {
+                    $q.notify({
+                        type: "info",
+                        message: "Удаление задачи отменено",
+                    });
+                    resolve(false);
+                });
             });
         },
 
