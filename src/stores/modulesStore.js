@@ -144,6 +144,56 @@ export const useModulesStore = defineStore("modules", {
             });
         },
 
+        deleteTaskFromAllTasksHandler(taskId, $q) {
+            return new Promise((resolve) => {
+                $q.dialog({
+                    title: "Подтверждение",
+                    message: "Вы уверены, что хотите удалить эту задачу?",
+                    ok: {
+                        label: "Да",
+                        color: "negative",
+                    },
+                    cancel: {
+                        label: "Нет",
+                        color: "primary",
+                    },
+                    persistent: true,
+                })
+                .onOk(async () => {
+                    try {
+                        const { status } = await deleteTask(taskId);
+                        if (status === 204) {
+                            $q.notify({
+                                type: "positive",
+                                message: "Задача успешно удалена",
+                            });
+                            resolve(true);
+                        } else {
+                            $q.notify({
+                                type: "negative",
+                                message: "Ошибка при удалении задачи",
+                            });
+                            resolve(false);
+                        }
+                    } catch (error) {
+                        console.error("Ошибка при удалении задачи:", error);
+                        $q.notify({
+                            type: "negative",
+                            message: "Ошибка при удалении задачи",
+                        });
+                        resolve(false);
+                    }
+                })
+                .onCancel(() => {
+                    $q.notify({
+                        type: "info",
+                        message: "Удаление задачи отменено",
+                    });
+                    resolve(false);
+                });
+            });
+        },
+
         async addNewModule($q, newModule) {
             const lastModuleNumber = Math.max(
                 ...this.modules.map((module) => {

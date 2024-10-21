@@ -28,6 +28,11 @@
                 : "Неизвестно"
             }}
           </q-td>
+          <q-btn
+              color="orange-9"
+              label="Удалить задачу"
+              @click="deleteTaskFromAllTasksHandler(props.row.id)"
+          ></q-btn>
         </q-tr>
       </template>
     </q-table>
@@ -36,16 +41,13 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-
+import { useModulesStore } from "@/stores/modulesStore";
 import { useQuasar } from "quasar";
-
 import PageLayout from "@/components/PageLayout.vue";
-import { useQuery } from "@vue/apollo-composable";
-
 import { getAllTasks } from "@/api";
 
 const $q = useQuasar();
-
+const moduleStore = useModulesStore();
 const tasks = ref([]);
 
 const columnsForTaskTable = [
@@ -81,6 +83,12 @@ const loadTasks = async () => {
     tasks.value = response;
   }
 };
+
+const deleteTaskFromAllTasksHandler = async (taskId) => {
+  const taskWasDeleted = await moduleStore.deleteTaskFromAllTasksHandler(taskId, $q);
+  if (taskWasDeleted) tasks.value = tasks.value.filter(task => task.id !== taskId);
+};
+
 
 onMounted(() => {
   loadTasks();
