@@ -37,6 +37,21 @@
               label="Удалить задачу"
               @click="deleteTaskHandler(props.row.id, moduleId)"
           ></q-btn>
+          <q-btn
+              color="amber-5"
+              label="Назначить"
+              @click="updateTaskStatusHandler(props.row, moduleId, statusToChange[0])"
+          ></q-btn>
+          <q-btn
+              color="green-5"
+              label="Выполнить"
+              @click="updateTaskStatusHandler(props.row, moduleId, statusToChange[1])"
+          ></q-btn>
+          <q-btn
+              color="blue-grey-5"
+              label="Завершить"
+              @click="updateTaskStatusHandler(props.row, moduleId, statusToChange[2])"
+          ></q-btn>
         </q-tr>
       </template>
     </q-table>
@@ -63,6 +78,8 @@ const moduleStore = useModulesStore();
 
 const module = ref({});
 const $q = useQuasar();
+
+const statusToChange = ["4123856274852877817", "4210340405255089394", "5451118349350597926"];
 
 const columnsForTaskTable = [
   {
@@ -104,6 +121,10 @@ const initializeModule = () => {
 
 const deleteTaskHandler = async (taskId, moduleId) => {
   await moduleStore.deleteTaskHandler(moduleId, taskId, $q);
+};
+
+const updateTaskStatusHandler = async (task, moduleId, newStatus) => {
+  await moduleStore.updateTaskStatusHandler(moduleId, task, newStatus, $q);
 };
 
 watch(

@@ -3,6 +3,7 @@ import {
     getModules,
     deleteModule,
     deleteTask,
+    updateTaskStatusFromModule,
     createModule,
     getModule,
     createTask,
@@ -138,6 +139,76 @@ export const useModulesStore = defineStore("modules", {
                     $q.notify({
                         type: "info",
                         message: "Удаление задачи отменено",
+                    });
+                    resolve(false);
+                });
+            });
+        },
+
+        updateTaskStatusHandler(moduleId, task, newStatus, $q) {
+            return new Promise((resolve) => {
+                $q.dialog({
+                    title: "Подтверждение",
+                    message: "Вы уверены, что хотите изменить статус этой задачи?",
+                    ok: {
+                        label: "Да",
+                        color: "negative",
+                    },
+                    cancel: {
+                        label: "Нет",
+                        color: "primary",
+                    },
+                    persistent: true,
+                })
+                .onOk(async () => {
+                    try {
+                        const { status, record } = await updateTaskStatusFromModule(task, newStatus);
+                        if (status === 200) {
+                            const moduleIndex = this.modules.findIndex(
+                                (module) => module.id === moduleId
+                            );
+                            if (moduleIndex !== -1) {
+                                const updatedTasks = this.modules[moduleIndex].tasks.map((thisTask) => 
+                                    thisTask.object.id === task.id 
+                                    ? { ...thisTask, object: { ...thisTask.object, status: record.status } } 
+                                    : thisTask
+                                );
+                                this.modules = this.modules.map((module, index) =>
+                                  index === moduleIndex
+                                    ? { ...module, tasks: updatedTasks }
+                                    : module
+                                );
+                            }
+                            $q.notify({
+                                type: "positive",
+                                message: `Задача успешно ${
+                                    newStatus === "4123856274852877817" ? "назначена!" :
+                                    newStatus === "4210340405255089394" ? "выполнена!" :
+                                    newStatus === "5451118349350597926" ? "завершена!" :
+                                    "статус неизвестен."
+                                }`,
+                            });
+                            resolve(true);
+                        } else {
+                            $q.notify({
+                                type: "negative",
+                                message: "Ошибка при изменении статуса задачи",
+                            });
+                            resolve(false);
+                        }
+                    } catch (error) {
+                        console.error("Ошибка при изменении статуса задачи:", error);
+                        $q.notify({
+                            type: "negative",
+                            message: "Ошибка при изменении статуса задачи",
+                        });
+                        resolve(false);
+                    }
+                })
+                .onCancel(() => {
+                    $q.notify({
+                        type: "info",
+                        message: "Изменении статуса задачи отменено",
                     });
                     resolve(false);
                 });
