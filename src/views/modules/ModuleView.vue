@@ -33,21 +33,25 @@
             }}
           </q-td>
           <q-btn
+              class="q-mx-sm q-my-sm"
               color="red"
               label="Удалить задачу"
               @click="deleteTaskHandler(props.row.id, moduleId)"
           ></q-btn>
           <q-btn
+              class="q-mx-sm q-my-sm"
               color="amber-5"
               label="Назначить"
               @click="updateTaskStatusHandler(props.row, moduleId, statusToChange[0])"
           ></q-btn>
           <q-btn
+              class="q-mx-sm q-my-sm"
               color="green-5"
               label="Выполнить"
               @click="updateTaskStatusHandler(props.row, moduleId, statusToChange[1])"
           ></q-btn>
           <q-btn
+              class="q-mx-sm q-my-sm"
               color="blue-grey-5"
               label="Завершить"
               @click="updateTaskStatusHandler(props.row, moduleId, statusToChange[2])"

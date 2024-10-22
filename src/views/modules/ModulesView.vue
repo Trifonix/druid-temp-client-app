@@ -63,6 +63,7 @@
           <q-td>{{ getTasksStatus(props.row.tasks) }}</q-td>
           <q-td>
             <q-btn
+              class="q-mx-sm q-my-sm"
               color="red"
               label="Удалить модуль"
               @click="deleteModuleHandler(props.row.id)"

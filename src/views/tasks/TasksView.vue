@@ -29,6 +29,7 @@
             }}
           </q-td>
           <q-btn
+              class="q-mx-sm q-my-sm"
               color="orange-9"
               label="Удалить задачу"
               @click="deleteTaskFromAllTasksHandler(props.row.id)"
