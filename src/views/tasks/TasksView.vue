@@ -59,7 +59,7 @@ const columnsForTaskTable = [
   },
   {
     name: "task_description",
-    label: "Desc",
+    label: "Description",
     field: "task_description",
     align: "left",
   },
