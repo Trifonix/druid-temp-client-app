@@ -7,7 +7,9 @@
           Москва
         </q-toolbar-title>
 
-        <div>Druid</div>
+        <div v-if="authStore.isAuthenticated">
+          {{ authStore.user.userMy.name }} {{ authStore.user.userMy.surname }}
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -17,10 +19,9 @@
   </q-layout>
 </template>
 
-<script>
-export default {
-  name: "App",
-};
+<script setup>
+import { useAuthStore } from "@/stores/authStore";
+const authStore = useAuthStore();
 </script>
 
 <style>
