@@ -11,29 +11,38 @@
     </div>
 
     <q-list bordered>
+
+      <q-item clickable @click="toggleTeamPages(groupTeam)">
+        <q-item-section>
+          <q-item-label>Команда</q-item-label>
+        </q-item-section>
+      </q-item>
+
       <q-item
+        v-if="teamChildrenVisible"
         clickable
-        v-for="group in allSpaceGroups"
+        v-for="group in allSpaceGroups.filter(group => group.name !== 'Команда')"
         :key="group.id"
         @click="goToGroupPage(group)"
-        :class="{ 'nested-group': group.name !== 'Команда' }"
+        class="nested-group"
       >
         <q-item-section>
           <q-item-label>{{ group.name }}</q-item-label>
         </q-item-section>
       </q-item>
 
-      <q-item clickable key="modules" @click="goToPage('/modules')">
+      <q-item clickable key="modules" @click="toggleModulePages(pageModules)">
         <q-item-section>
           <q-item-label>Модули</q-item-label>
         </q-item-section>
       </q-item>
 
       <q-item
+        v-if="moduleChildrenVisible"
         clickable
         v-for="module in moduleStore.modules"
         :key="module.id"
-        @click="goToPage(`/modules/${module.id}`)"
+        @click="toggleModulePages(module)"
         class="nested-group"
       >
         <q-item-section>
@@ -41,7 +50,7 @@
         </q-item-section>
       </q-item>
 
-      <q-item clickable key="tasks" @click="goToPage('/tasks')">
+      <q-item clickable key="tasks" @click="goToTasks">
         <q-item-section>
           <q-item-label>Мои задачи</q-item-label>
         </q-item-section>
@@ -74,9 +83,26 @@ const logout = () => {
 
 const allSpaceGroups = ref([]);
 const allSpacePagesWithoutGroups = ref([]);
+const teamChildrenVisible = ref(false);
+const moduleChildrenVisible = ref(false);
+const groupTeam = ref();
+const pageModules = ref(false);
+
+const toggleTeamPages = (group) => {
+  teamChildrenVisible.value = !teamChildrenVisible.value;
+  goToGroupPage(group);
+};
+
+const toggleModulePages = (module) => {
+  console.log(module);
+  moduleChildrenVisible.value = !moduleChildrenVisible.value;
+  if (!module) router.push({ name: "modules" });
+  else goToModulePage(module);
+};
 
 const fetchAllSpaceGroups = async () => {
   allSpaceGroups.value = await getAllSpaceGroups();
+  groupTeam.value = allSpaceGroups.value[0];
 };
 
 watchEffect(fetchAllSpaceGroups);
@@ -99,8 +125,12 @@ const goToGroupPage = (group) => {
   router.push({ name: "group", params: { groupId: group.id } });
 };
 
-const goToPage = (page) => {
-  router.push(page);
+const goToModulePage = (module) => {
+  router.push({ name: "module", params: { moduleId: module.id } });
+};
+
+const goToTasks = () => {
+  router.push({ name: "tasks" });
 };
 </script>
 
