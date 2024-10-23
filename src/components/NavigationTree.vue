@@ -67,6 +67,7 @@ const router = useRouter();
 const logout = () => {
   localStorage.removeItem("access_token");
   localStorage.removeItem("space");
+  localStorage.removeItem("user");
   apolloClient.clearStore();
   router.push("/login");
 };
