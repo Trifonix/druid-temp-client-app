@@ -20,8 +20,10 @@
 </template>
 
 <script setup>
+import { watchEffect } from "vue";
 import { useAuthStore } from "@/stores/authStore";
 const authStore = useAuthStore();
+watchEffect(authStore);
 </script>
 
 <style>
